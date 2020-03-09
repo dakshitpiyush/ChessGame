@@ -1,0 +1,16 @@
+#chessboard{
+    border-collapse: collapse;
+    margin:auto;
+}
+.cell{
+    width: 75px;
+    height:75px;
+    border:1px solid black;
+    cursor:pointer;
+}
+.white{
+    color:#00ffcc;
+}
+.black{
+    color:#666633;
+}
