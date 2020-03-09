@@ -499,7 +499,7 @@ function markPossible(source){
         possmov={};
         update();
         autocalculate();
-        
+
     }
     else if(source.children.length>0 && source.getAttribute("id")!=cur_pos && source.children[0].getAttribute("class")==human){
         possmov={};
@@ -515,7 +515,6 @@ function markPossible(source){
             cur_tr_po_mov_bg.push(document.getElementById(possmov[idd][i]).style.backgroundColor);
             document.getElementById(possmov[idd][i]).style.background="rgb(140, 246, 255)";
             cur_tr_po_mov.push(possmov[idd][i]);
-        }    
+        }
     }
 }
-
