@@ -60,7 +60,7 @@ for(color in pos){
     }
 }
 var human="white",ai="black";
-var user=human;
+var user=human,checkbit=false;
 var possmov={};
 var board=[];
 function update(){
@@ -70,9 +70,11 @@ function update(){
             board[i][j]=document.getElementById(i+""+j).children;
         }
     }
+
 }
 
 function autocalculate(){
+    var possmov={}; //this variable is diffrant than global one
     for(var i=0;i<8;i++){
         for(var j=0;j<8;j++){
             if(board[i][j].length>0){
@@ -206,7 +208,7 @@ function autocalculate(){
                                 y--;
                             }
                             break;
-                        case "camel":
+                            case "camel":
                             var x=i-1,y=j-1,inc=0;
                             while(x>=0 && y>=0){
                                 if(board[x][y].length>0){
@@ -419,92 +421,133 @@ function autocalculate(){
                                 y++;
                             }
                             break;
-                            case "horse":
-                                var x=i+2,y=j+1,inc=0;
-                                if(x<8 && y<8 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
+                        case "horse":
+                            var x=i+2,y=j+1,inc=0;
+                            if(x<8 && y<8 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
+                                possmov[i+""+j][inc++]=x+""+y;
+                            }
+                            y=j-1;
+                            if(x<8 && y>=0 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
+                                possmov[i+""+j][inc++]=x+""+y;
+                            }
+                            x=i-2;
+                            if(x>=0 && y>=0 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
+                                possmov[i+""+j][inc++]=x+""+y;
+                            }
+                            y=j+1
+                            if(x>=0 && y<8 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
+                                possmov[i+""+j][inc++]=x+""+y;
+                            }
+                            x=i+1; y=j+2;
+                            if(x<8 && y<8 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
+                                possmov[i+""+j][inc++]=x+""+y;
+                            }
+                            x=i-1;
+                            if(x>=0 && y<8 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
+                                possmov[i+""+j][inc++]=x+""+y;
+                            }
+                            y=j-2;
+                            if(x>=0 && y>=0 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
+                                possmov[i+""+j][inc++]=x+""+y;
+                            }
+                            x=i+1;
+                            if(x<8 && y>=0 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
                                     possmov[i+""+j][inc++]=x+""+y;
-                                }
-                                y=j-1;
-                                if(x<8 && y>=0 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
-                                    possmov[i+""+j][inc++]=x+""+y;
-                                }
-                                x=i-2;
-                                if(x>=0 && y>=0 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
-                                    possmov[i+""+j][inc++]=x+""+y;
-                                }
-                                y=j+1
-                                if(x>=0 && y<8 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
-                                    possmov[i+""+j][inc++]=x+""+y;
-                                }
-                                x=i+1; y=j+2;
-                                if(x<8 && y<8 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
-                                    possmov[i+""+j][inc++]=x+""+y;
+                            }
+                            break;
+                            case "king":
+                                var x=i+1,inc=0;
+                                if(x<8 && (board[x][j].length==0 || board[x][j][0].getAttribute("class")!=user)){
+                                    possmov[i+""+j][inc++]=x+""+j;
                                 }
                                 x=i-1;
-                                if(x>=0 && y<8 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
-                                    possmov[i+""+j][inc++]=x+""+y;
+                                if(x>=0 && (board[x][j].length==0 || board[x][j][0].getAttribute("class")!=user)){
+                                    possmov[i+""+j][inc++]=x+""+j;
                                 }
-                                y=j-2;
-                                if(x>=0 && y>=0 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
-                                    possmov[i+""+j][inc++]=x+""+y;
+                                x=j+1;
+                                if(x<8 && (board[i][x].length==0 || board[i][x][0].getAttribute("class")!=user)){
+                                    possmov[i+""+j][inc++]=i+""+x;
                                 }
-                                x=i+1;
-                                if(x<8 && y>=0 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
-                                        possmov[i+""+j][inc++]=x+""+y;
+                                x=j-1;
+                                if(x>=0 && (board[i][x].length==0 || board[i][x][0].getAttribute("class")!=user)){
+                                    possmov[i+""+j][inc++]=i+""+x;
                                 }
                                 break;
-                                case "king":
-                                    var x=i+1,inc=0;
-                                    if(x<8 && (board[x][j].length==0 || board[x][j][0].getAttribute("class")!=user)){
-                                        possmov[i+""+j][inc++]=x+""+j;
-                                    }
-                                    x=i-1;
-                                    if(x>=0 && (board[x][j].length==0 || board[x][j][0].getAttribute("class")!=user)){
-                                        possmov[i+""+j][inc++]=x+""+j;
-                                    }
-                                    x=j+1;
-                                    if(x<8 && (board[i][x].length==0 || board[i][x][0].getAttribute("class")!=user)){
-                                        possmov[i+""+j][inc++]=i+""+x;
-                                    }
-                                    x=j-1;
-                                    if(x>=0 && (board[i][x].length==0 || board[i][x][0].getAttribute("class")!=user)){
-                                        possmov[i+""+j][inc++]=i+""+x;
-                                    }
-                                    break;
                     }
                 }
             }
         }
     }
+    return possmov;
+}
+//additional function for prevent self cause check to self mhanje swatala check n honya sathi
+function getfilter(possmov){                                         
+    var lim_pos={};
+    var empt=document.getElementById("empty").children;
+        for(arre in possmov){
+            var source_j=arre%10,source_i=(arre-source_j)/10,inc=0;
+            lim_pos[arre]=[];
+            for(values in possmov[arre]){
+                var dest_j=possmov[arre][values]%10,dest_i=(possmov[arre][values]-dest_j)/10;
+                var temp=board[dest_i][dest_j]; 
+                board[dest_i][dest_j]=board[source_i][source_j];
+                board[source_i][source_j]=empt;
+                if(user==human){
+                    user=ai;
+                } else{
+                    user=human;
+                }
+                if(!ifCheck()){
+                    lim_pos[arre][inc++]=possmov[arre][values];
+                }
+                if(user==human){
+                    user=ai;
+                } else{
+                    user=human;
+                }
+                board[source_i][source_j]=board[dest_i][dest_j];
+                board[dest_i][dest_j]=temp;
+            }
+        }
+        return lim_pos;
 }
 update();
-autocalculate();
-console.log(board);
+possmov=getfilter(autocalculate());
+
 var cur_pos='';
 var currenttroop='';
 var cur_tr_po_mov=[];
 var cur_tr_po_mov_bg=[];
 var cboard = document.getElementById('chessboard');
 function markPossible(source){
+    
     if(source.style.backgroundColor=="rgb(140, 246, 255)"){
         source.innerHTML=currenttroop;
         document.getElementById(cur_pos).innerHTML='';
         for(var i=0;i<cur_tr_po_mov.length;i++){
             document.getElementById(cur_tr_po_mov[i]).style.background=cur_tr_po_mov_bg[i];
         }
+        
+
         cur_pos='';
         currenttroop='';
         cur_tr_po_mov=[];
         cur_tr_po_mov_bg=[];
-        possmov={};
-        update();
-        autocalculate();
 
-    }
-    else if(source.children.length>0 && source.getAttribute("id")!=cur_pos && source.children[0].getAttribute("class")==human){
-        possmov={};
         update();
-        autocalculate();
+        if(ifCheck()){
+            alert("check");
+        }
+        if(user==human){
+            user=ai;
+        } else{
+            user=human;
+        }
+        possmov=getfilter(autocalculate());
+        
+    }
+    else if(source.children.length>0 && source.children[0].getAttribute("class")==user ){
+        console.log(source.children.length);
         for(var i=0;i<cur_tr_po_mov.length;i++){
             document.getElementById(cur_tr_po_mov[i]).style.background=cur_tr_po_mov_bg[i];
         }
@@ -518,3 +561,22 @@ function markPossible(source){
         }
     }
 }
+function ifCheck(){
+    for(var i=0;i<8;i++){
+        for(var j=0;j<8;j++){
+            if(board[i][j].length>0){
+                if(board[i][j][0].getAttribute("name")=="king" && board[i][j][0].getAttribute("class")!=user){
+                    var king_pos=i+""+j;
+                }
+            }
+        }
+    }
+    var posmov=autocalculate();          //if we use getfilter here program will colapse
+    for(arr in posmov){
+        if(posmov[arr].includes(king_pos)){
+            return true;
+        }
+    }
+    return false;
+}
+
