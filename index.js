@@ -614,7 +614,7 @@ async function markPossible(source){
                 }
             }
             if(source.children[0].getAttribute("name")=="slder"){
-                if(Math.floor(source.getAttribute("id")/10)==0){
+                if(Math.floor(source.getAttribute("id")/10)==0 || Math.floor(source.getAttribute("id")/10)==7){
                     document.getElementById("choose").style.display="block";
                     for(var i=0;i<8;i++){
                         for(var j=0;j<8;j++){
