@@ -581,7 +581,7 @@ var cur_tr_po_mov_bg=[];
 
 
 var cboard = document.getElementById('chessboard');
-function markPossible(source){
+async function markPossible(source){
     
     if(source.style.backgroundColor=="rgb(140, 246, 255)"){
         source.innerHTML=currenttroop.innerHTML;
@@ -612,14 +612,26 @@ function markPossible(source){
                 }
             }
             if(source.children[0].getAttribute("name")=="slder"){
-                var value
                 if(Math.floor(source.getAttribute("id")/10)==0){
                     document.getElementById("choose").style.display="block";
-                    document.getElementById("choose").addEventListener("change",function(){
-                        value= document.getElementById("choose").value;
-                        source.innerHTML=value;
+                    for(var i=0;i<8;i++){
+                        for(var j=0;j<8;j++){
+                            document.getElementById(i+""+j).style.pointerEvents = "none";
+                        }
+                    }
+                    let promise =new Promise((resolve, reject)=>{
+                        document.getElementById("choose").onchange=function(){
+                            resolve(document.getElementById("choose").value);
+                        }
                     });
-                    //document.getElementById("choose").style.display="none";
+                    let selection = await promise;
+                    for(var i=0;i<8;i++){
+                        for(var j=0;j<8;j++){
+                            document.getElementById(i+""+j).style.pointerEvents = "auto";
+                        }
+                    }
+                    source.innerHTML="<h3 class='"+user+"' name='"+selection+"'>"+selection+"</h3>"
+                    document.getElementById("choose").style.display="none";
                     
                 }
             }
