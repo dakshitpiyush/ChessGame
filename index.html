@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>chess bhai5</title>
+
+    <head>        
+        <title>chess bhai4</title>
+        <link rel="icon" href="icons/horse_black.png" type="image/gif">
+
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <table id="chessboard"></table>
         <div id="empty"></div>   <!--do not change here -->
+        <select id="choose" style="display: none;">
+            <option value=""></option>
+            <option value="elephant">elephant</option>
+            <option value="camel">camel</option>
+            <option value="queen">queen</option>
+            <option value="horse">horse</option>
+        </select>
         <script src="index.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     </body>
