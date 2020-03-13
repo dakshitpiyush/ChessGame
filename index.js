@@ -632,7 +632,7 @@ async function markPossible(source){
                             document.getElementById(i+""+j).style.pointerEvents = "auto";
                         }
                     }
-                    source.innerHTML="<h3 class='"+user+"' name='"+selection+"'>"+selection+"</h3>"
+                    source.innerHTML="<img class='"+user+"' name='"+selection+"' src='icons/"+selection+"_"+user+".png'>"
                     document.getElementById("choose").style.display="none";
                     
                 }
