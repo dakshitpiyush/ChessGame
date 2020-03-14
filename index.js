@@ -7,7 +7,7 @@ for(var i=0; i<8;i++){
         if((i%2==0 && j%2==1) || (i%2==1 && j%2==0)){
             document.getElementById(i+''+j).style.backgroundColor = "#7f5733";
         }else{
-            document.getElementById(i+''+j).style.backgroundColor = "white";
+            document.getElementById(i+''+j).style.backgroundColor = "#fff1e5";
         }
     }
     cboard.innerHTML += "</tr>";
@@ -581,15 +581,23 @@ var currenttroop='';
 var cur_tr_po_mov=[];
 var cur_tr_po_mov_bg=[];
 
+var high=document.createElement("div");
+high.classList.add("dot");
 
 var cboard = document.getElementById('chessboard');
 async function markPossible(source){
     
-    if(source.style.backgroundColor=="rgb(140, 246, 255)"){
+    //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
+    if(source.contains(high)){
+        console.log(cur_tr_po_mov);
+        console.log(source);
         source.innerHTML=currenttroop.innerHTML;
         document.getElementById(cur_pos).innerHTML='';
         for(var i=0;i<cur_tr_po_mov.length;i++){
-            document.getElementById(cur_tr_po_mov[i]).style.background=cur_tr_po_mov_bg[i];
+            console.log(cur_tr_po_mov[i]);
+            //document.getElementById(cur_tr_po_mov[i]).style.background=cur_tr_po_mov_bg[i];
+            var bc = document.getElementById(cur_tr_po_mov[i]).removeChild(high);
+            console.log(i+"removed ");
         }
             if(source.children[0].getAttribute("name")=="king"){
                 if(currenttroop.getAttribute("id")==capable_castling[user]["i"]+"4"){
@@ -677,18 +685,20 @@ async function markPossible(source){
         
     }
     else if(source.children.length>0 && source.children[0].getAttribute("class")==user ){
-    
-        for(var i=0;i<cur_tr_po_mov.length;i++){
-            document.getElementById(cur_tr_po_mov[i]).style.background=cur_tr_po_mov_bg[i];
-        }
+        console.log(cur_tr_po_mov);
+        
         var idd=source.getAttribute("id");
         cur_pos=idd;
         currenttroop=source;
         for(var i=0;i<possmov[idd].length;i++){
+            console.log(possmov[idd][i]);
             cur_tr_po_mov_bg.push(document.getElementById(possmov[idd][i]).style.backgroundColor);
-            document.getElementById(possmov[idd][i]).classList.add("dot");//="rgb(140, 246, 255)";
+            //document.getElementById(possmov[idd][i]).classList.add("dot");//="rgb(140, 246, 255)";
+            document.getElementById(possmov[idd][i]).appendChild(high);
             cur_tr_po_mov.push(possmov[idd][i]);
+            console.log(document.getElementById(possmov[idd][i]).children);
         }
+        
     }
 }
 
