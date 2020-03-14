@@ -588,7 +588,7 @@ var cboard = document.getElementById('chessboard');
 async function markPossible(source){
     
     //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
-    if(source.lastChild.classList[0]=="dot"){
+    if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
         console.log("ghusla ithe");
         console.log(cur_tr_po_mov);
         console.log(source);
