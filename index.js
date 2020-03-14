@@ -3,7 +3,7 @@ var cboard = document.getElementById('chessboard');
 for(var i=0; i<8;i++){
     cboard.innerHTML += "<tr id='"+i+"'>";
     for(var j=0; j<8;j++){
-        document.getElementById(i).innerHTML += '<td class="cell" id="'+i+''+j+'" onclick="markPossible(this)" ondragover="drroped(this)"></td>';
+        document.getElementById(i).innerHTML += '<td class="cell" id="'+i+''+j+'" onclick="markPossible(this)" ondrop="drroped(this) ondragover="dragging(event)"></td>';
         if((i%2==0 && j%2==1) || (i%2==1 && j%2==0)){
             document.getElementById(i+''+j).style.backgroundColor = "#7f5733";
         }else{
@@ -12,6 +12,8 @@ for(var i=0; i<8;i++){
     }
     cboard.innerHTML += "</tr>";
 }
+
+
 var castling={"white":{"left":[71,72,73],"right":[75,76]},"black":{"left":[01,02,03],"right":[05,06]}};
 var capable_castling={"white":{"i":7,"right":true,"left":true},"black":{"i":0,"right":true,"left":true}};
 //setting position of troop
@@ -58,7 +60,7 @@ for(color in pos){
     for(elem in pos[color]){
         for(value in pos[color][elem]){
             var i = pos[color][elem][value]['i'], j = pos[color][elem][value]['j'];
-            document.getElementById(i+""+j).innerHTML = "<img class='"+color+"' name='"+elem+"' src='icons/"+elem+"_"+color+".png' draggable='true' ondragstart='markPossible(this.parentElement)'>";
+            document.getElementById(i+""+j).innerHTML = "<img class='"+color+"' name='"+elem+"' src='icons/"+elem+"_"+color+".png' draggable='true' ondragstart='markPossible(this.parentElement)' >";
         }
     }
 }
@@ -584,9 +586,10 @@ var high;
 
 var cboard = document.getElementById('chessboard');
 async function markPossible(source){
-    
+    console.log(source);
     //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
     if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
+        console.log(source);
         source.innerHTML=currenttroop.innerHTML;
         document.getElementById(cur_pos).innerHTML='';
         
@@ -720,7 +723,11 @@ function swapuser(){
     }
 }
 function drroped(source){
+  
     if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
         markPossible(source);
     }
+}
+function dragging(event){
+    event.preventDefault();
 }
