@@ -10,6 +10,7 @@ body{
     height:75px;
     border:1px solid #7f5733;
     cursor:pointer;
+    position: relative;
 }
 .white{
     color:#00ffcc;
@@ -24,8 +25,8 @@ body{
 		width: 80%;
 		margin: auto;
 		border-radius: 50%;
-		position: relative;
-		opacity: 0.7;
+		position: absolute;
+		opacity: 0.9;
 		top:1px;
     	bottom:1px;
     	left:1px;

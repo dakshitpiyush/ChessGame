@@ -581,24 +581,28 @@ var currenttroop='';
 var cur_tr_po_mov=[];
 var cur_tr_po_mov_bg=[];
 
-var high=document.createElement("div");
-high.classList.add("dot");
+var high;
+            
 
 var cboard = document.getElementById('chessboard');
 async function markPossible(source){
     
     //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
-    if(source.contains(high)){
+    if(source.lastChild.classList[0]=="dot"){
+        console.log("ghusla ithe");
         console.log(cur_tr_po_mov);
         console.log(source);
         source.innerHTML=currenttroop.innerHTML;
         document.getElementById(cur_pos).innerHTML='';
-        for(var i=0;i<cur_tr_po_mov.length;i++){
-            console.log(cur_tr_po_mov[i]);
+        //for(var i=0;i<cur_tr_po_mov.length;i++){
+           // console.log(cur_tr_po_mov[i]);
+            //console.log(i+"removed "+document.getElementById(cur_tr_po_mov[i]).childNodes[1]);
+            //console.log(document.getElementsByClassName("dot"));
             //document.getElementById(cur_tr_po_mov[i]).style.background=cur_tr_po_mov_bg[i];
-            var bc = document.getElementById(cur_tr_po_mov[i]).removeChild(high);
-            console.log(i+"removed ");
-        }
+            //var bc = document.getElementById(cur_tr_po_mov[i]).removeChild[1];
+            //document.getElementById(cur_tr_po_mov[i]).removeChild(document.getElementsByClassName("dot"));
+            document.getElementsByClassName("dot")[0].remove();
+        //}
             if(source.children[0].getAttribute("name")=="king"){
                 if(currenttroop.getAttribute("id")==capable_castling[user]["i"]+"4"){
                     if(source.getAttribute("id")==capable_castling[user]["i"]+"2"){
@@ -686,17 +690,29 @@ async function markPossible(source){
     }
     else if(source.children.length>0 && source.children[0].getAttribute("class")==user ){
         console.log(cur_tr_po_mov);
-        
+        if(document.getElementsByClassName("dot").length >1){
+            console.log(document.getElementsByClassName("dot").length+"----------");
+            document.getElementsByClassName("dot")[0].remove();
+        }
+        cur_pos='';
+        currenttroop='';
+        cur_tr_po_mov=[];
+        cur_tr_po_mov_bg=[];
+
         var idd=source.getAttribute("id");
         cur_pos=idd;
         currenttroop=source;
         for(var i=0;i<possmov[idd].length;i++){
             console.log(possmov[idd][i]);
-            cur_tr_po_mov_bg.push(document.getElementById(possmov[idd][i]).style.backgroundColor);
+            high=document.createElement("div");
+            high.classList.add("dot");
+            //cur_tr_po_mov_bg.push(document.getElementById(possmov[idd][i]).style.backgroundColor);
             //document.getElementById(possmov[idd][i]).classList.add("dot");//="rgb(140, 246, 255)";
             document.getElementById(possmov[idd][i]).appendChild(high);
             cur_tr_po_mov.push(possmov[idd][i]);
             console.log(document.getElementById(possmov[idd][i]).children);
+            //console.log(document.getElementById("50").children);
+            console.log(document.getElementById(possmov[idd][i]).lastChild.classList[0]);
         }
         
     }
