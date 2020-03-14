@@ -34,3 +34,9 @@ body{
         right:1px;
         z-index:-1;
   }
+  .white ,.black{
+        cursor:grab;
+  }
+  .grabber{
+      cursor: grabbing;
+  }

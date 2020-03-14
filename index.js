@@ -3,7 +3,7 @@ var cboard = document.getElementById('chessboard');
 for(var i=0; i<8;i++){
     cboard.innerHTML += "<tr id='"+i+"'>";
     for(var j=0; j<8;j++){
-        document.getElementById(i).innerHTML += '<td class="cell" id="'+i+''+j+'" onclick="markPossible(this)" ondrop="drroped(this)" ondragover="prevdef(event)"></td>';
+        document.getElementById(i).innerHTML += '<td class="cell" id="'+i+''+j+'" onclick="markPossible(this)" ondrop="markPossible(this)" ondragover="prevdef(event)"></td>';
         if((i%2==0 && j%2==1) || (i%2==1 && j%2==0)){
             document.getElementById(i+''+j).style.backgroundColor = "#7f5733";
         }else{
@@ -724,10 +724,11 @@ function swapuser(){
 }
 function drroped(source){
   
-    if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
+    //if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
         markPossible(source);
-    }
+   // }
 }
 function prevdef(event){
+    
     event.preventDefault();
 }
