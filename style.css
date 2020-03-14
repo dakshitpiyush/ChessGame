@@ -11,6 +11,7 @@ body{
     border:1px solid #7f5733;
     cursor:pointer;
     position: relative;
+    z-index:-1;
 }
 .white{
     color:#00ffcc;
@@ -30,5 +31,6 @@ body{
 		top:1px;
     	bottom:1px;
     	left:1px;
-    	right:1px;
+        right:1px;
+        z-index:-1;
   }
