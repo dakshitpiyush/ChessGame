@@ -601,7 +601,11 @@ async function markPossible(source){
             //document.getElementById(cur_tr_po_mov[i]).style.background=cur_tr_po_mov_bg[i];
             //var bc = document.getElementById(cur_tr_po_mov[i]).removeChild[1];
             //document.getElementById(cur_tr_po_mov[i]).removeChild(document.getElementsByClassName("dot"));
-            document.getElementsByClassName("dot")[0].remove();
+            //document.getElementsByClassName("dot")[0].remove();
+            while(document.getElementsByClassName("dot").length>0){
+                $('.dot').remove();
+            }
+            
         //}
             if(source.children[0].getAttribute("name")=="king"){
                 if(currenttroop.getAttribute("id")==capable_castling[user]["i"]+"4"){
@@ -692,7 +696,8 @@ async function markPossible(source){
         console.log(cur_tr_po_mov);
         if(document.getElementsByClassName("dot").length >1){
             console.log(document.getElementsByClassName("dot").length+"----------");
-            document.getElementsByClassName("dot")[0].remove();
+            //document.getElementsByClassName("dot")[0].remove();
+            $('.dot').remove();
         }
         cur_pos='';
         currenttroop='';
@@ -702,6 +707,7 @@ async function markPossible(source){
         var idd=source.getAttribute("id");
         cur_pos=idd;
         currenttroop=source;
+        console.log(possmov[idd]);
         for(var i=0;i<possmov[idd].length;i++){
             console.log(possmov[idd][i]);
             high=document.createElement("div");
