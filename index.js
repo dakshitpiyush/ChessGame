@@ -694,7 +694,7 @@ async function markPossible(source){
     }
     else if(source.children.length>0 && source.children[0].getAttribute("class")==user ){
         console.log(cur_tr_po_mov);
-        if(document.getElementsByClassName("dot").length >1){
+        if(document.getElementsByClassName("dot").length >0){
             console.log(document.getElementsByClassName("dot").length+"----------");
             //document.getElementsByClassName("dot")[0].remove();
             $('.dot').remove();
