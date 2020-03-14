@@ -686,7 +686,7 @@ async function markPossible(source){
         currenttroop=source;
         for(var i=0;i<possmov[idd].length;i++){
             cur_tr_po_mov_bg.push(document.getElementById(possmov[idd][i]).style.backgroundColor);
-            document.getElementById(possmov[idd][i]).style.background="rgb(140, 246, 255)";
+            document.getElementById(possmov[idd][i]).classList.add("dot");//="rgb(140, 246, 255)";
             cur_tr_po_mov.push(possmov[idd][i]);
         }
     }
