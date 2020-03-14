@@ -3,7 +3,7 @@ var cboard = document.getElementById('chessboard');
 for(var i=0; i<8;i++){
     cboard.innerHTML += "<tr id='"+i+"'>";
     for(var j=0; j<8;j++){
-        document.getElementById(i).innerHTML += '<td class="cell" id="'+i+''+j+'" onclick="markPossible(this)"></td>';
+        document.getElementById(i).innerHTML += '<td class="cell" id="'+i+''+j+'" onclick="markPossible(this)" ondragover="drroped(this)"></td>';
         if((i%2==0 && j%2==1) || (i%2==1 && j%2==0)){
             document.getElementById(i+''+j).style.backgroundColor = "#7f5733";
         }else{
@@ -58,7 +58,7 @@ for(color in pos){
     for(elem in pos[color]){
         for(value in pos[color][elem]){
             var i = pos[color][elem][value]['i'], j = pos[color][elem][value]['j'];
-            document.getElementById(i+""+j).innerHTML = "<img class='"+color+"' name='"+elem+"' src='icons/"+elem+"_"+color+".png'>";
+            document.getElementById(i+""+j).innerHTML = "<img class='"+color+"' name='"+elem+"' src='icons/"+elem+"_"+color+".png' draggable='true' ondragstart='markPossible(this.parentElement)'>";
         }
     }
 }
@@ -719,4 +719,8 @@ function swapuser(){
         user=human;
     }
 }
-
+function drroped(source){
+    if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
+        markPossible(source);
+    }
+}
