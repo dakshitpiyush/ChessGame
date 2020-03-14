@@ -64,7 +64,6 @@ for(color in pos){
 }
 var human="white",ai="black";
 var user=human,checkbit=false;
-console.log(user);
 var possmov={};
 var board=[];
 function update(){
@@ -76,7 +75,6 @@ function update(){
     }
 
 }
-console.log(user);
 function autocalculate(){
     var possmov={}; //this variable is diffrant than global one
     for(var i=0;i<8;i++){
@@ -589,46 +587,33 @@ async function markPossible(source){
     
     //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
     if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
-        console.log("ghusla ithe");
-        console.log(cur_tr_po_mov);
-        console.log(source);
         source.innerHTML=currenttroop.innerHTML;
         document.getElementById(cur_pos).innerHTML='';
-        //for(var i=0;i<cur_tr_po_mov.length;i++){
-           // console.log(cur_tr_po_mov[i]);
-            //console.log(i+"removed "+document.getElementById(cur_tr_po_mov[i]).childNodes[1]);
-            //console.log(document.getElementsByClassName("dot"));
-            //document.getElementById(cur_tr_po_mov[i]).style.background=cur_tr_po_mov_bg[i];
-            //var bc = document.getElementById(cur_tr_po_mov[i]).removeChild[1];
-            //document.getElementById(cur_tr_po_mov[i]).removeChild(document.getElementsByClassName("dot"));
-            //document.getElementsByClassName("dot")[0].remove();
-            while(document.getElementsByClassName("dot").length>0){
-                $('.dot').remove();
-            }
-            
-        //}
-            if(source.children[0].getAttribute("name")=="king"){
-                if(currenttroop.getAttribute("id")==capable_castling[user]["i"]+"4"){
-                    if(source.getAttribute("id")==capable_castling[user]["i"]+"2"){
-                        document.getElementById(capable_castling[user]["i"]+"3").innerHTML=document.getElementById(capable_castling[user]["i"]+"0").innerHTML;
-                        document.getElementById(capable_castling[user]["i"]+"0").innerHTML="";
-                    }
-                    else if(source.getAttribute("id")==capable_castling[user]["i"]+"6"){
-                        document.getElementById(capable_castling[user]["i"]+"5").innerHTML=document.getElementById(capable_castling[user]["i"]+"7").innerHTML;
-                        document.getElementById(capable_castling[user]["i"]+"7").innerHTML="";
-                    }
+        
+        while(document.getElementsByClassName("dot").length>0){
+            $('.dot').remove();
+        }
+        if(source.children[0].getAttribute("name")=="king"){
+            if(currenttroop.getAttribute("id")==capable_castling[user]["i"]+"4"){
+                if(source.getAttribute("id")==capable_castling[user]["i"]+"2"){
+                    document.getElementById(capable_castling[user]["i"]+"3").innerHTML=document.getElementById(capable_castling[user]["i"]+"0").innerHTML;
+                    document.getElementById(capable_castling[user]["i"]+"0").innerHTML="";
+                }
+                else if(source.getAttribute("id")==capable_castling[user]["i"]+"6"){
+                    document.getElementById(capable_castling[user]["i"]+"5").innerHTML=document.getElementById(capable_castling[user]["i"]+"7").innerHTML;
+                    document.getElementById(capable_castling[user]["i"]+"7").innerHTML="";
                 }
             }
-            if(source.children[0].getAttribute("name")=="king"){
-                   capable_castling[user]["left"] =false;
-                capable_castling[user]["right"] =false;
-            }
-            if(source.children[0].getAttribute("name")=="elephant"){
-                
-                if(currenttroop.getAttribute("id")==capable_castling[user]["i"]+"0"){
-                    capable_castling[user]["left"] =false; 
-                }
-            }
+        }
+        if(source.children[0].getAttribute("name")=="king"){
+            capable_castling[user]["left"] =false;
+            capable_castling[user]["right"] =false;
+        }
+        if(source.children[0].getAttribute("name")=="elephant"){      
+            if(currenttroop.getAttribute("id")==capable_castling[user]["i"]+"0"){
+                capable_castling[user]["left"] =false; 
+           }
+        }
             if(source.children[0].getAttribute("name")=="slder"){
                 if(Math.floor(source.getAttribute("id")/10)==0 || Math.floor(source.getAttribute("id")/10)==7){
                     document.getElementById("choose").style.display="block";
@@ -658,8 +643,6 @@ async function markPossible(source){
         cur_tr_po_mov=[];
         cur_tr_po_mov_bg=[];
 
-        
-
         update();
         var res;
         if(ifCheck()){
@@ -672,12 +655,8 @@ async function markPossible(source){
         } else{
             user=human;
         }
-        
-        
         possmov=getfilter(autocalculate());
-        
         if(res){
-            
             var mate=true;
             for(arr in possmov){
                 if(possmov[arr].length>0){
@@ -690,13 +669,9 @@ async function markPossible(source){
                 alert("checkmate");
             }
         }
-        
     }
     else if(source.children.length>0 && source.children[0].getAttribute("class")==user ){
-        console.log(cur_tr_po_mov);
         if(document.getElementsByClassName("dot").length >0){
-            console.log(document.getElementsByClassName("dot").length+"----------");
-            //document.getElementsByClassName("dot")[0].remove();
             $('.dot').remove();
         }
         cur_pos='';
@@ -707,18 +682,11 @@ async function markPossible(source){
         var idd=source.getAttribute("id");
         cur_pos=idd;
         currenttroop=source;
-        console.log(possmov[idd]);
         for(var i=0;i<possmov[idd].length;i++){
-            console.log(possmov[idd][i]);
             high=document.createElement("div");
             high.classList.add("dot");
-            //cur_tr_po_mov_bg.push(document.getElementById(possmov[idd][i]).style.backgroundColor);
-            //document.getElementById(possmov[idd][i]).classList.add("dot");//="rgb(140, 246, 255)";
             document.getElementById(possmov[idd][i]).appendChild(high);
             cur_tr_po_mov.push(possmov[idd][i]);
-            console.log(document.getElementById(possmov[idd][i]).children);
-            //console.log(document.getElementById("50").children);
-            console.log(document.getElementById(possmov[idd][i]).lastChild.classList[0]);
         }
         
     }
@@ -751,83 +719,4 @@ function swapuser(){
         user=human;
     }
 }
-function swap_cal(){
-    //swapuser();
-    return prev;
-}
-/*function checkBlocks(user){
-    var right=true,left=true;
-        var arr=[];
-        var posmov=swap_cal();          //if we use getfilter here program will colapse
-        //right side of user
-        for(var j=1;j<4;j++){
-            if(board[row][j].length>0){
-                right=false;
-                break;
-            }
-            if(j==1){
-                continue;
-            }
-            
-            for(arr in posmov){
-                if(posmov[arr].includes(row+""+j)){
-                    right=false;
-                    break;
-                }
-            }
-            
-        }
-        if(right){
-            arr[0]=row+""+2;
-        }
-        //left
-        for(var j=5;j<7;j++){
-            if(board[row][j].length>0){
-                left=false;
-                break;
-            }
-            for(arr in posmov){
-                if(posmov[arr].includes(row+""+j)){
-                    left=false;
-                    break;
-                }
-            }
-            
-        }
-        if(left){
-            arr[1]=row+""+j;
-        }
-        swapuser();
-        return arr;
-        
-}
-/*function blocks(){
-    var possmov=autocalculate();
-    for(direction in castling[user]){
-        for(emppty_blocks in castling[user][direction]){
-            console.log("length of :"+document.getElementById(castling[user][direction][emppty_blocks]).children.length>0);
-            if(document.getElementById(castling[user][direction][emppty_blocks]).children.length>0){
-                break;
-            }
-            if(castling[user][direction][emppty_blocks]=="71" || castling[user][direction][emppty_blocks]=="01"){
-                continue;
-            }
-                
-            else{
-                for(arr in possmov){
-                    if(possmov[arr].includes(castling[user][direction][emppty_blocks])){
-                        break;
-                    }
-                }
-            }
-        }
-        if(emppty_blocks>=castling[user][direction].length){
-            capable_castling[user][direction]=true;
-        }
-    }
-    console.log(capable_castling);
-}
-console.log(document.getElementById(castling[user]["left"][0]).children.length);
-console.log(castling[user]["left"][0]);
-console.log(user);
-*/
+
