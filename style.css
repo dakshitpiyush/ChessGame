@@ -17,3 +17,10 @@ body{
 .black{
     color:#666633;
 }
+.dot {
+    height: 50px;
+    width: 50px;
+    background-color: FF5454;
+    border-radius: 50%;
+    opacity:0.5;
+  }
