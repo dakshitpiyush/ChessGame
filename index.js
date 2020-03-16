@@ -571,13 +571,24 @@ var cur_tr_po_mov=[];
 var cur_tr_po_mov_bg=[];
 
 var high;
-            
+           
 
 var cboard = document.getElementById('chessboard');
 async function markPossible(source){
     
     //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
     if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
+        //var audio=new Audio('move.wav');
+        //audio.play();
+        if(source.firstChild==source.lastChild){
+            console.log("rikam");
+            new Audio("move.wav").play();
+        }
+        else{
+            console.log("rikam ny");
+            new Audio("kill.wav").play();
+        }
+        console.log(source.firstChild+""+source.lastChild);
         source.innerHTML=currenttroop.innerHTML;
         document.getElementById(cur_pos).innerHTML='';
         
@@ -629,8 +640,7 @@ async function markPossible(source){
                     
                 }
             }
-            var audio=new Audio('move.wav');
-            audio.play();
+            
         cur_pos='';
         currenttroop='';
         cur_tr_po_mov=[];
