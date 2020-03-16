@@ -12,9 +12,6 @@ for(var i=0; i<8;i++){
     }
     cboard.innerHTML += "</tr>";
 }
-
-
-var castling={"white":{"left":[71,72,73],"right":[75,76]},"black":{"left":[01,02,03],"right":[05,06]}};
 var capable_castling={"white":{"i":7,"right":true,"left":true},"black":{"i":0,"right":true,"left":true}};
 //setting position of troop
 var ind=0,jnd=0;
@@ -60,7 +57,7 @@ for(color in pos){
     for(elem in pos[color]){
         for(value in pos[color][elem]){
             var i = pos[color][elem][value]['i'], j = pos[color][elem][value]['j'];
-            document.getElementById(i+""+j).innerHTML = "<img class='"+color+"' name='"+elem+"' src='icons/"+elem+"_"+color+".png' draggable='true' ondragstart='markPossible(this.parentElement)' >";
+            document.getElementById(i+""+j).innerHTML = "<img class='"+color+"' name='"+elem+"' src='icons/"+elem+"_"+color+".png' draggable='true' ondragstart='markPossible(this.parentElement)'>";
         }
     }
 }
@@ -515,19 +512,11 @@ function getfilter(possmov){
                 var temp=board[dest_i][dest_j]; 
                 board[dest_i][dest_j]=board[source_i][source_j];
                 board[source_i][source_j]=empt;
-                if(user==human){
-                    user=ai;
-                } else{
-                    user=human;
-                }
+                swapuser();
                 if(!ifCheck()){
                     lim_pos[arre][inc++]=possmov[arre][values];
                 }
-                if(user==human){
-                    user=ai;
-                } else{
-                    user=human;
-                }
+                swapuser();
                 board[source_i][source_j]=board[dest_i][dest_j];
                 board[dest_i][dest_j]=temp;
             }
@@ -586,10 +575,9 @@ var high;
 
 var cboard = document.getElementById('chessboard');
 async function markPossible(source){
-    console.log(source);
+    
     //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
     if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
-        console.log(source);
         source.innerHTML=currenttroop.innerHTML;
         document.getElementById(cur_pos).innerHTML='';
         
@@ -641,6 +629,8 @@ async function markPossible(source){
                     
                 }
             }
+            var audio=new Audio('move.wav');
+            audio.play();
         cur_pos='';
         currenttroop='';
         cur_tr_po_mov=[];
@@ -652,12 +642,7 @@ async function markPossible(source){
             res=true;
             checkbit=true;
         }
-        
-        if(user==human){
-            user=ai;
-        } else{
-            user=human;
-        }
+        swapuser();
         possmov=getfilter(autocalculate());
         if(res){
             var mate=true;
@@ -711,8 +696,6 @@ function ifCheck(){
             return true;
         }
     }
-
-   
     return false;
 }
 function swapuser(){
@@ -722,13 +705,6 @@ function swapuser(){
         user=human;
     }
 }
-function drroped(source){
-  
-    //if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
-        markPossible(source);
-   // }
-}
 function prevdef(event){
-    
     event.preventDefault();
 }
