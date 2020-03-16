@@ -648,13 +648,19 @@ async function markPossible(source){
             var mate=true;
             for(arr in possmov){
                 if(possmov[arr].length>0){
-                    alert("check");
+                    
                     mate=false;
+                    audio=new Audio('check.wav');
+                    audio.play();
+                    alert("check");
                     break;
                 }
             }
             if(mate){
+                audio=new Audio('mate.wav');
+                audio.play();
                 alert("checkmate");
+                
             }
         }
     }
