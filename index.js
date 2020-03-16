@@ -483,7 +483,7 @@ function autocalculate(){
                                 if(x>=0 && y<8 && (board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
                                     possmov[i+""+j][inc++]=x+""+y;
                                 }
-                                x=j+1,y=j+1;
+                                x=i+1,y=j+1;
                                 if(x<8 && y<8 &&(board[x][y].length==0 || board[x][y][0].getAttribute("class")!=user)){
                                     possmov[i+""+j][inc++]=x+""+y;
                                 }
