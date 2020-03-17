@@ -737,6 +737,10 @@ function swapuser(){
 function prevdef(event){
     event.preventDefault();
 }
-function abc(){
-console.log(document.getElementById("choose_troop").value);
-}
+
+console.log(document.getElementsByName("choosetroop").value);
+if (document.getElementById('choosecamel').checked) {
+    var rate_value = document.getElementById('choosequeen').value;
+    console.log("ha seleced");
+  }
+ console.log($('input[name="choosetroop"]:checked').val());

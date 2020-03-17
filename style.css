@@ -90,7 +90,7 @@ select#choose option[value="queen"] { background-image:url("icons/queen_black.pn
       width: 0;
       opacity: 0;
   }
-  [type=radio] + img {
+  lable + img {
     cursor: pointer;
   }
   
