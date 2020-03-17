@@ -621,16 +621,30 @@ async function markPossible(source){
         }
             if(source.children[0].getAttribute("name")=="slder"){
                 if(Math.floor(source.getAttribute("id")/10)==0 || Math.floor(source.getAttribute("id")/10)==7){
-                    document.getElementById("choose").style.display="block";
+                    var option_list=["queen", "horse", "camel", "elephant"];
+                    var option_div=document.getElementById("choosee");
+                    for(value in option_list){
+                        option_div.innerHTML+="<input type='radio' id='"+option_list[value]+"' value='"+option_list[value]+"' name='choose_option' >";
+                        option_div.innerHTML+= "<label for='"+option_list[value]+"'><img src='icons/"+option_list[value]+"_"+user+".png'></lable>";
+                    }
                     for(var i=0;i<8;i++){
                         for(var j=0;j<8;j++){
                             document.getElementById(i+""+j).style.pointerEvents = "none";
                         }
                     }
                     let promise =new Promise((resolve, reject)=>{
-                        document.getElementById("choose").onchange=function(){
-                            resolve(document.getElementById("choose").value);
-                        }
+                            document.getElementsByName("choose_option")[0].onclick=function(){
+                                resolve(document.getElementsByName("choose_option")[0].value);
+                            }
+                            document.getElementsByName("choose_option")[1].onclick=function(){
+                                resolve(document.getElementsByName("choose_option")[1].value);
+                            }
+                            document.getElementsByName("choose_option")[2].onclick=function(){
+                                resolve(document.getElementsByName("choose_option")[2].value);
+                            }
+                            document.getElementsByName("choose_option")[3].onclick=function(){
+                                resolve(document.getElementsByName("choose_option")[3].value);
+                            }
                     });
                     let selection = await promise;
                     for(var i=0;i<8;i++){
@@ -648,43 +662,32 @@ async function markPossible(source){
         currenttroop='';
         cur_tr_po_mov=[];
         cur_tr_po_mov_bg=[];
-
+        checkbit=ifCheck();
         update();
-        var res;
-        if(ifCheck()){
-            res=true;
-            checkbit=true;
-            
-        }
-        
         swapuser();
         possmov=getfilter(autocalculate());
-        if(res){
+        var res=result();
+        if(res=="checkmate"){
+            audio=new Audio('mate.wav');
+            audio.play();
+            console.log("mate"+king_pos);
+            khatra=document.createElement("div");
+            khatra.classList.add("mate");
+            document.getElementById(king_pos).appendChild(khatra);
+            document.getElementById("results").innerHTML="CHECK-MATE";
+        }
+        else if(checkbit){
             document.getElementById("results").style.display="block";
-            var mate=true;
-            for(arr in possmov){
-                if(possmov[arr].length>0){
-                    
-                    mate=false;
-                    audio=new Audio('check.wav');
-                    audio.play();
-                    console.log("check"+king_pos);
-                    khatra=document.createElement("div");
-                    khatra.classList.add("check");
-                    document.getElementById(king_pos).appendChild(khatra);
-                    document.getElementById("results").innerHTML="CHECK";
-                    break;
-                }
-            }
-            if(mate){
-                audio=new Audio('mate.wav');
-                audio.play();
-                console.log("mate"+king_pos);
-                khatra=document.createElement("div");
-                khatra.classList.add("mate");
-                document.getElementById(king_pos).appendChild(khatra);
-                document.getElementById("results").innerHTML="CHECK-MATE";
-            }
+            audio=new Audio('check.wav');
+            audio.play();
+            khatra=document.createElement("div");
+            khatra.classList.add("check");
+            document.getElementById(king_pos).appendChild(khatra);
+            document.getElementById("results").innerHTML="CHECK";
+        } else if(res=="stillmate"){
+            audio=new Audio('mate.wav');
+            audio.play();
+            document.getElementById("results").innerHTML="STILL-Mate";
         }
     }
     else if(source.children.length>0 && source.children[0].getAttribute("class")==user ){
@@ -738,5 +741,21 @@ function prevdef(event){
     event.preventDefault();
 }
 function abc(){
-console.log(document.getElementById("choose_troop").value);
+    console.log(document.getElementById("choose_troop").value);
+}
+function result(){
+    var isZeropos=true;
+    for(arr in possmov){
+        if(possmov[arr].length>0){
+            isZeropos=false;
+            break;
+        }
+    }
+    if(checkbit && isZeropos){
+        return "checkmate";
+    } else if(isZeropos){
+        return "stillmate";
+    } else{
+        return null;
+    }
 }
