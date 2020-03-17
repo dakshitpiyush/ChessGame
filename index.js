@@ -571,15 +571,18 @@ var cur_tr_po_mov=[];
 var cur_tr_po_mov_bg=[];
 
 var high;
-           
+var khatra;       
 
 var cboard = document.getElementById('chessboard');
 async function markPossible(source){
     
     //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
     if(source.children.length>0 && source.lastChild.classList[0]=="dot"){
-        //var audio=new Audio('move.wav');
-        //audio.play();
+        if(document.getElementsByClassName("check").length>0){
+            $('.check').remove();
+            document.getElementById("results").innerHTML="";
+            document.getElementById("results").style.display="none";
+        }
         if(source.firstChild==source.lastChild){
             console.log("rikam");
             new Audio("move.wav").play();
@@ -651,10 +654,13 @@ async function markPossible(source){
         if(ifCheck()){
             res=true;
             checkbit=true;
+            
         }
+        
         swapuser();
         possmov=getfilter(autocalculate());
         if(res){
+            document.getElementById("results").style.display="block";
             var mate=true;
             for(arr in possmov){
                 if(possmov[arr].length>0){
@@ -662,15 +668,22 @@ async function markPossible(source){
                     mate=false;
                     audio=new Audio('check.wav');
                     audio.play();
-                    alert("check");
+                    console.log("check"+king_pos);
+                    khatra=document.createElement("div");
+                    khatra.classList.add("check");
+                    document.getElementById(king_pos).appendChild(khatra);
+                    document.getElementById("results").innerHTML="CHECK";
                     break;
                 }
             }
             if(mate){
                 audio=new Audio('mate.wav');
                 audio.play();
-                alert("checkmate");
-                
+                console.log("mate"+king_pos);
+                khatra=document.createElement("div");
+                khatra.classList.add("mate");
+                document.getElementById(king_pos).appendChild(khatra);
+                document.getElementById("results").innerHTML="CHECK-MATE";
             }
         }
     }
@@ -695,13 +708,13 @@ async function markPossible(source){
         
     }
 }
-
+var king_pos;
 function ifCheck(){
     for(var i=0;i<8;i++){
         for(var j=0;j<8;j++){
             if(board[i][j].length>0){
                 if(board[i][j][0].getAttribute("name")=="king" && board[i][j][0].getAttribute("class")!=user){
-                    var king_pos=i+""+j;
+                    king_pos=i+""+j;
                 }
             }
         }
@@ -723,4 +736,7 @@ function swapuser(){
 }
 function prevdef(event){
     event.preventDefault();
+}
+function abc(){
+console.log(document.getElementById("choose_troop").value);
 }
