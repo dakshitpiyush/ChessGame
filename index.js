@@ -653,7 +653,7 @@ async function markPossible(source){
                         }
                     }
                     source.innerHTML="<img class='"+user+"' name='"+selection+"' src='icons/"+selection+"_"+user+".png'>"
-                    document.getElementById("choose").style.display="none";
+                    document.getElementById("choosee").innerHTML="";
                     
                 }
             }
