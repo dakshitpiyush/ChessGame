@@ -1,0 +1,100 @@
+body{
+    background-color:white;
+}
+#chessboard{
+    border-collapse: collapse;
+    margin:auto;
+}
+.cell{
+    width: 75px;
+    height:75px;
+    border:1px solid #7f5733;
+    cursor:pointer;
+    position: relative;
+    z-index:-1;
+}
+.white{
+    color:#00ffcc;
+}
+.black{
+    color:#666633;
+}
+.dot {
+    
+    background-color: #FF5454;
+    height: 80%;
+		width: 80%;
+		margin: auto;
+		border-radius: 50%;
+		position: absolute;
+		opacity: 0.9;
+		top:1px;
+    	bottom:1px;
+    	left:1px;
+        right:1px;
+        z-index:-1;
+  }
+  .white ,.black{
+        cursor:grab;
+  }
+  .grabber{
+      cursor: grabbing;
+  }
+select#choose option[value="horse"]   { background-image:url("icons/horse_black.png");   }
+select#choose option[value="camel"] { background-image:url("icons/camel_black.png"); }
+select#choose option[value="elephant"] { background-image:url("icons/elephant_black.png"); }
+select#choose option[value="queen"] { background-image:url("icons/queen_black.png"); }
+
+.check {
+    
+    background-color: #fff173;
+    height: 100%;
+		width: 100%;
+		margin: auto;
+		
+		position: absolute;
+		opacity: 0.9;
+		top:1px;
+    	bottom:1px;
+    	left:1px;
+        right:1px;
+        z-index:-1;
+  }
+  .mate {
+    background-color: #ff3333;
+    height: 100%;
+		width: 100%;
+		margin: auto;
+		
+		position: absolute;
+		opacity: 0.9;
+		top:1px;
+    	bottom:1px;
+    	left:1px;
+        right:1px;
+        z-index:-1;
+  }
+  .results{
+      background-color: #fff173;
+      margin: auto;
+      font-size: 30px;
+      width: 20%;
+      height: auto;
+      display: none;
+      text-align: center;
+      
+      font-family: 'ABeeZee';
+  }
+  [type=radio]{
+      height: 0;
+      width: 0;
+      opacity: 0;
+  }
+  [type=radio] + label {
+    cursor: pointer;
+  }
+  
+  /* CHECKED STYLES */
+  [type=radio]:checked + label + img {
+    outline: 2px solid #f00;
+  }
