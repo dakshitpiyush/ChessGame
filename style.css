@@ -90,11 +90,11 @@ select#choose option[value="queen"] { background-image:url("icons/queen_black.pn
       width: 0;
       opacity: 0;
   }
-  [type=radio] + img {
+  [type=radio] + label {
     cursor: pointer;
   }
   
   /* CHECKED STYLES */
-  [type=radio]:checked + img {
+  [type=radio]:checked + label + img {
     outline: 2px solid #f00;
   }
