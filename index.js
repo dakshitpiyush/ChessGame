@@ -686,6 +686,7 @@ async function markPossible(source){
             document.getElementById(king_pos).appendChild(khatra);
             document.getElementById("results").innerHTML="CHECK";
         } else if(res=="stillmate"){
+            document.getElementById("results").style.display="block";
             audio=new Audio('mate.wav');
             audio.play();
             document.getElementById("results").innerHTML="STILL-Mate";
