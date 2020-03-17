@@ -668,6 +668,7 @@ async function markPossible(source){
         possmov=getfilter(autocalculate());
         var res=result();
         if(res=="checkmate"){
+            document.getElementById("results").style.display="block";
             audio=new Audio('mate.wav');
             audio.play();
             console.log("mate"+king_pos);
