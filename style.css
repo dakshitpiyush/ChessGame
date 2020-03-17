@@ -4,6 +4,8 @@ body{
 #chessboard{
     border-collapse: collapse;
     margin:auto;
+    transition :twidth 1s, height 1s, transform 1s;
+    transform: rotate(0deg);
 }
 .cell{
     width: 75px;
@@ -34,7 +36,7 @@ body{
         right:1px;
         z-index:-1;
   }
-  .white ,.black{
+  .white,.black{
         cursor:grab;
   }
   .grabber{
@@ -97,4 +99,19 @@ select#choose option[value="queen"] { background-image:url("icons/queen_black.pn
   /* CHECKED STYLES */
   [type=radio]:checked + label + img {
     outline: 2px solid #f00;
+  }
+
+  img{
+    margin: auto;
+    transition :twidth 1s, height 1s, transform 1s;
+    transform: rotate(0deg);
+  }
+
+  .flip{
+    transition :twidth 1s, height 1s, transform 1s;
+    transform: rotate(180deg);
+  }
+  .flipr{
+    transition :twidth 1s, height 1s, transform 1s;
+    transform: rotate(0deg);
   }

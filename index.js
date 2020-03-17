@@ -72,7 +72,7 @@ function update(){
             board[i][j]=document.getElementById(i+""+j).children;
         }
     }
-
+    console.log(board);
 }
 function autocalculate(){
     var possmov={}; //this variable is diffrant than global one
@@ -592,6 +592,7 @@ async function markPossible(source){
             new Audio("kill.wav").play();
         }
         console.log(source.firstChild+""+source.lastChild);
+        
         source.innerHTML=currenttroop.innerHTML;
         document.getElementById(cur_pos).innerHTML='';
         
@@ -689,13 +690,32 @@ async function markPossible(source){
             document.getElementById("results").style.display="block"; 
             audio=new Audio('mate.wav');
             audio.play();
-            document.getElementById("results").innerHTML="STILL-Mate";
+            document.getElementById("results").innerHTML="STILL-MATE";
         }
+        if(user==ai){
+            document.getElementById("chessboard").style.transform="rotate(180deg)";
+            for(els in document.getElementsByTagName("img")){
+                if(els <32){
+                    document.getElementsByTagName("img")[els].style.transform="rotate(180deg)";
+                }
+            }
+        }
+        else{
+            document.getElementById("chessboard").style.transform="rotate(360deg)";
+            for(els in document.getElementsByTagName("img")){
+                if(els <32){
+                    document.getElementsByTagName("img")[els].style.transform="rotate(0deg)";
+                }
+            }
+        }
+        //document.getElementsByClassName("white").style.transform="rotate(180deg)";
+        console.log(document.getElementById("chessboard").children) ;
     }
     else if(source.children.length>0 && source.children[0].getAttribute("class")==user ){
         if(document.getElementsByClassName("dot").length >0){
             $('.dot').remove();
         }
+        console.log(source.innerHTML);
         cur_pos='';
         currenttroop='';
         cur_tr_po_mov=[];
@@ -710,6 +730,7 @@ async function markPossible(source){
             document.getElementById(possmov[idd][i]).appendChild(high);
             cur_tr_po_mov.push(possmov[idd][i]);
         }
+
         
     }
 }
