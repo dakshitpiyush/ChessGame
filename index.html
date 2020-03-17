@@ -5,41 +5,15 @@
         <title>chess bhai4</title>
         <link rel="icon" href="icons/horse_black.png" type="image/gif">
         <link href='https://fonts.googleapis.com/css?family=ABeeZee' rel='stylesheet'>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>ss
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <table id="chessboard"></table>
         <div id="empty"></div>   <!--do not change here -->
-        <select id="choose" style="display: block; height:100px; width: 100px;">
-            <option value=""></option>
-            <option value="elephant" style="display: block; height:100px; width: 100px;">elephant</option>
-            <option value="camel" style="display: block; height:100px; width: 100px;">camel</option>
-            <option value="queen" style="display: block; height:100px; width: 100px;">queen</option>
-            <option value="horse" style="background-image:url('icons/horse_black.png');background-color: tomato;">horse</option>
-        </select>
-        <div id="choosee" class="choosee">
-          
-            <input type="radio" name="choosetroop" id="choosequeen" value="queen" checked />
-            <label for="choosequeen">sdfghj<img src="icons\queen_black.png" alt="queen" /></lable>  
-            
-        
-            <input type="radio" name="choosetroop" id="choosehorse" value="horse" />
-            <label for="choosehorse"> vnnbvvbns<img src="icons\horse_black.png" alt="horse" /></lable>
-        
-            <input type="radio" name="choosetroop" id="chooseelephant" value="elephant" />
-            <label for="chooseelephant">fghjkjhg<img src="icons\elephant_black.png" alt="elephant" /></lable>
-            
-            <input type="radio" name="choosetroop"  id="choosecamel" value="camel" />
-            <label for="choosecamel">vbnbvvbn<img src="icons\camel_black.png" alt="camel" /></lable> 
-        </div>
+        <div id="choosee" class="choosee"></div>
         <div id="results" class="results"></div>
         <script src="index.js" type="text/javascript"></script>
-        <script>
-            $(document).ready(function(){
-             $("#choose").off("click");
-        });  
-        
         </script>
     </body>
 </html>
