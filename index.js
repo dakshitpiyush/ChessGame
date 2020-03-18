@@ -692,21 +692,13 @@ async function markPossible(source){
             audio.play();
             document.getElementById("results").innerHTML="STILL-MATE";
         }
+        let root=document.documentElement;
         if(user==ai){
-            document.getElementById("chessboard").style.transform="rotate(180deg)";
-            for(els in document.getElementsByTagName("img")){
-                if(els <32){
-                    document.getElementsByTagName("img")[els].style.transform="rotate(180deg)";
-                }
-            }
-        }
-        else{
-            document.getElementById("chessboard").style.transform="rotate(360deg)";
-            for(els in document.getElementsByTagName("img")){
-                if(els <32){
-                    document.getElementsByTagName("img")[els].style.transform="rotate(0deg)";
-                }
-            }
+            root.style.setProperty('--par', '180deg');
+            root.style.setProperty('--chi', '-180deg');
+        } else{
+            root.style.setProperty('--par', '0deg');
+            root.style.setProperty('--chi', '0deg');
         }
         //document.getElementsByClassName("white").style.transform="rotate(180deg)";
         console.log(document.getElementById("chessboard").children) ;

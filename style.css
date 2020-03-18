@@ -1,3 +1,7 @@
+:root{
+    --par:0deg;
+    --chi:0deg;
+}
 body{
     background-color:white;
 }
@@ -5,7 +9,7 @@ body{
     border-collapse: collapse;
     margin:auto;
     transition :twidth 1s, height 1s, transform 1s;
-    transform: rotate(0deg);
+    transform: rotate(var(--par));
 }
 .cell{
     width: 75px;
@@ -14,6 +18,8 @@ body{
     cursor:pointer;
     position: relative;
     z-index:-1;
+    transform:rotate(var(--chi));
+    transition :twidth 1s, height 1s, transform 1s;
 }
 .white{
     color:#00ffcc;
@@ -103,8 +109,6 @@ select#choose option[value="queen"] { background-image:url("icons/queen_black.pn
 
   img{
     margin: auto;
-    transition :twidth 1s, height 1s, transform 1s;
-    transform: rotate(0deg);
   }
 
   .flip{
