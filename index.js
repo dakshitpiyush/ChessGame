@@ -694,17 +694,17 @@ async function markPossible(source){
         }
         if(user==ai){
             document.getElementById("chessboard").style.transform="rotate(180deg)";
-            for(els in document.getElementsByTagName("img")){
-                if(els <32){
-                    document.getElementsByTagName("img")[els].style.transform="rotate(180deg)";
+            for(els in document.getElementsByClassName("cell")){
+                if(els <64){
+                    document.getElementsByClassName("cell")[els].style.transform="rotate(180deg)";
                 }
             }
         }
         else{
             document.getElementById("chessboard").style.transform="rotate(360deg)";
-            for(els in document.getElementsByTagName("img")){
-                if(els <32){
-                    document.getElementsByTagName("img")[els].style.transform="rotate(0deg)";
+            for(els in document.getElementsByClassName("cell")){
+                if(els <64){
+                    document.getElementsByClassName("cell")[els].style.transform="rotate(0deg)";
                 }
             }
         }
