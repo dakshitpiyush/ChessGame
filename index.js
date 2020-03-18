@@ -692,6 +692,7 @@ async function markPossible(source){
             audio.play();
             document.getElementById("results").innerHTML="STILL-MATE";
         }
+        let root=document.documentElement;
         if(user==ai){
             document.getElementById("chessboard").style.transform="rotate(180deg)";
             for(els in document.getElementsByClassName("cell")){
