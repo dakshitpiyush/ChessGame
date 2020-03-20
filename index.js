@@ -710,7 +710,7 @@ async function markPossible(source){
             }
         }
         //document.getElementsByClassName("white").style.transform="rotate(180deg)";
-        console.log(document.getElementById("chessboard").children) ;
+        
     }
     else if(source.children.length>0 && source.children[0].getAttribute("class")==user ){
         if(document.getElementsByClassName("dot").length >0){
