@@ -72,7 +72,7 @@ function update(){
             board[i][j]=document.getElementById(i+""+j).children;
         }
     }
-    console.log(board);
+    
 }
 function autocalculate(){
     var possmov={}; //this variable is diffrant than global one
@@ -521,7 +521,7 @@ function getfilter(possmov){
                 board[dest_i][dest_j]=temp;
             }
         }
-        if(!checkbit){
+        /*if(!checkbit){
             if(capable_castling[user]["left"]){
                 var color=capable_castling[user]["i"];
                 if( board[color][2].length==0 && board[color][1].length==0 && lim_pos[color+"4"].includes(color+"3")){
@@ -542,6 +542,7 @@ function getfilter(possmov){
             }
             if(capable_castling[user]["right"]){
                 var color=capable_castling[user]["i"];
+                
                 if( board[color][6].length==0 && lim_pos[color+"4"].includes(color+"5")){
                     swapuser();
                     var cas_pos=autocalculate();
@@ -558,7 +559,7 @@ function getfilter(possmov){
                     }
                 }  
             }
-        }
+        }*/
 
         return lim_pos;
 }
@@ -584,14 +585,14 @@ async function markPossible(source){
             document.getElementById("results").style.display="none";
         }
         if(source.firstChild==source.lastChild){
-            console.log("rikam");
+            
             new Audio("move.wav").play();
         }
         else{
-            console.log("rikam ny");
+            
             new Audio("kill.wav").play();
         }
-        console.log(source.firstChild+""+source.lastChild);
+        
         
         source.innerHTML=currenttroop.innerHTML;
         document.getElementById(cur_pos).innerHTML='';
@@ -672,7 +673,7 @@ async function markPossible(source){
             document.getElementById("results").style.display="block";
             audio=new Audio('mate.wav');
             audio.play();
-            console.log("mate"+king_pos);
+            
             khatra=document.createElement("div");
             khatra.classList.add("mate");
             document.getElementById(king_pos).appendChild(khatra);
@@ -692,7 +693,10 @@ async function markPossible(source){
             audio.play();
             document.getElementById("results").innerHTML="STILL-MATE";
         }
-        let root=document.documentElement;
+        if (res == null) {
+            nextMove();
+        }
+
         if(user==ai){
             document.getElementById("chessboard").style.transform="rotate(180deg)";
             for(els in document.getElementsByClassName("cell")){
@@ -716,7 +720,7 @@ async function markPossible(source){
         if(document.getElementsByClassName("dot").length >0){
             $('.dot').remove();
         }
-        console.log(source.innerHTML);
+        
         cur_pos='';
         currenttroop='';
         cur_tr_po_mov=[];
@@ -763,9 +767,6 @@ function swapuser(){
 }
 function prevdef(event){
     event.preventDefault();
-}
-function abc(){
-    console.log(document.getElementById("choose_troop").value);
 }
 function result(){
     var isZeropos=true;
