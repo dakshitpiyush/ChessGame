@@ -145,70 +145,86 @@ function minmax(ismax, depth){
         return bestscore;
     }
 }*/
+/*
 function nextMove(){
     var bestscore=-Infinity;
     var move={"source":"","dest":""};
+    user=ai;
+    
+     
     for(var i=0;i<8;i++){
         for(var j=0;j<8;j++){
+            console.log(board[i][j]);
             
             if(board[i][j].length>0 && board[i][j][0].getAttribute("class")==user){
-
                 for(moves in possmov[i+""+j]){
-                    var oldboard=board;
+                    console.log(i+""+j);
+                    console.log(board[i][j]);
                     var moves_i=possmov[i+""+j][moves][0];
                     var moves_j=possmov[i+""+j][moves][1];
+                    var temp=board[moves_i][moves_j];
                     board[moves_i][moves_j]=board[i][j];
                     board[i][j]=empty;
                     var score=minimax(false,5);
+                    
                     if(score>bestscore){
                         bestscore=score;
-                        console.log(bestscore);
                         move["source"]=i+""+j;
-                        move["dest"]=possmov[i+""+j][moves];
-                        console.log("here")
+                        move["dest"]=possmov[i+""+j][moves];  
                     }
-                    board=oldboard;
+                    board[i][j]=board[moves_i][moves_j];
+                    board[moves_i][moves_j]=temp;
                 }
+                
+                
             }
+            
         }
+        
     }
+    console.log(bestscore);
     console.log(move);
     document.getElementById(move["dest"]).innerHTML = document.getElementById(move["source"]).innerHTML;
     document.getElementById(move["source"]).innerHTML=null ;
     
     update();
-    swapuser();
+    user=human
     possmov=getfilter(autocalculate());
 }
 function minimax(isMax,depth){
     if(depth ==0){
-        console.log(depth);
-        console.log(getValue());
+        //console.log(getValue());
         return getValue();
     }
+    var possmove=getfilter(autocalculate());
     
-    console.log(possmove);
     if(isMax){
-        swapuser();
+        user=ai;
         var possmove=getfilter(autocalculate());
         var bestscore=-Infinity;
-        var moves;
+        
         for(var i=0;i<8;i++){
             for(var j=0;j<8;j++){
                 if(board[i][j].length>0 && board[i][j][0].getAttribute("class")==user){
-                    console.log(user);
+                    
+                    var moves;
                     for(moves in possmove[i+""+j]){
-                        var oldboard=board;
+                        
                         var moves_i=possmove[i+""+j][moves][0];
                         var moves_j=possmove[i+""+j][moves][1];
+                        var temp=board[moves_i][moves_j];
                         board[moves_i][moves_j]=board[i][j];
                         board[i][j]=empty;
                         var score=minimax(false,depth-1);
-                        //if(score>bestscore){
-                        //    bestscore=score;
-                        //}
-                        bestscore=Math.max(bestscore,score);
-                        board=oldboard;
+                        
+                        if(score>bestscore){
+                            //console.log("maximized:"+score);
+                            bestscore=score;
+                        }
+                        
+                        //bestscore=Math.max(bestscore,score);
+                        board[i][j]=board[moves_i][moves_j];
+                        board[moves_i][moves_j]=temp;
                     }
                 }
             }
@@ -216,28 +232,135 @@ function minimax(isMax,depth){
         return bestscore;
     }
     else{
-        swapuser();
+        user=human;
         var possmove=getfilter(autocalculate());
         var bestscore=Infinity;
-        var moves;
+        
         for(var i=0;i<8;i++){
             for(var j=0;j<8;j++){
                 if(board[i][j].length>0 && board[i][j][0].getAttribute("class")==user){
-                    console.log(user);
-                    console.log(possmov+""+i+""+j)
+                    
+                    
+                    var moves;
                     for(moves in possmove[i+""+j]){
-                        var oldboard=board;
-                        console.log(possmove[i+""+j]);
+                        
+                        
                         var moves_i=possmove[i+""+j][moves][0];
                         var moves_j=possmove[i+""+j][moves][1];
+                        var temp=board[moves_i][moves_j];
                         board[moves_i][moves_j]=board[i][j];
                         board[i][j]=empty;
                         var score=minimax(true,depth-1);
-                        //if(score<bestscore){
-                         //   bestscore=score;
+                       
+                        if(score<bestscore){
+                            //console.log("minimized:"+score);
+                           bestscore=score;
+                        }
+                        //bestscore=Math.min(bestscore,score);
+                        board[i][j]=board[moves_i][moves_j];
+                        board[moves_i][moves_j]=temp;
+                    }
+                }
+            }
+        }
+        return bestscore;
+    }
+}*/
+function nextMove() {
+    var bestscore = -Infinity;
+    var move = { "source": "", "dest": "" };
+    for (var i = 0; i < 8; i++) {
+        for (var j = 0; j < 8; j++) {
+
+            if (board[i][j].length > 0 && board[i][j][0].getAttribute("class") == user) {
+                let moves;
+                for (moves in possmov[i + "" + j]) {
+                    
+                    var moves_i = possmov[i + "" + j][moves][0];
+                    var moves_j = possmov[i + "" + j][moves][1];
+                    var temp = board[moves_i][moves_j];
+                    board[moves_i][moves_j] = board[i][j];
+                    board[i][j] = empty;
+                    swapuser();
+                    var score = minimax(false, 3);
+                    swapuser();
+                    if (score > bestscore) {
+                        bestscore = score;
+                        move["source"] = i + "" + j;
+                        move["dest"] = possmov[i + "" + j][moves];
+                    }
+                    board[i][j] = board[moves_i][moves_j];
+                    board[moves_i][moves_j] = temp;
+                }
+            }
+        }
+    }
+    //console.log(move);
+    document.getElementById(move["dest"]).innerHTML = document.getElementById(move["source"]).innerHTML;
+    document.getElementById(move["source"]).innerHTML = null;
+
+    update();
+    swapuser();
+    possmov = getfilter(autocalculate());
+}
+
+function minimax(isMax, depth) {
+    if (depth == 0) {
+        //console.log(getValue());
+        return getValue();
+    }
+    if (isMax) {
+        var possmove = getfilter(autocalculate());
+        var bestscore = -Infinity;
+        var moves;
+        for (var i = 0; i < 8; i++) {
+            for (var j = 0; j < 8; j++) {
+                if (board[i][j].length > 0 && board[i][j][0].getAttribute("class") == user) {
+                    for (moves in possmove[i + "" + j]) {
+                        
+                        var moves_i = possmove[i + "" + j][moves][0];
+                        var moves_j = possmove[i + "" + j][moves][1];
+                        var temp = board[moves_i][moves_j];
+                        board[moves_i][moves_j] = board[i][j];
+                        board[i][j] = empty;
+                        swapuser();
+                        var score = minimax(false, depth - 1);
+                        swapuser();
+                        //if(score>bestscore){
+                        //    bestscore=score;
                         //}
-                        bestscore=Math.min(bestscore,score);
-                        board=oldboard;
+                        bestscore = Math.max(bestscore, score);
+                        board[i][j] = board[moves_i][moves_j];
+                        board[moves_i][moves_j] = temp;
+                    }
+                }
+            }
+        }
+        return bestscore;
+    }
+    else {
+        var possmove = getfilter(autocalculate());
+        var bestscore = Infinity;
+        var moves;
+        for (var i = 0; i < 8; i++) {
+            for (var j = 0; j < 8; j++) {
+                if (board[i][j].length > 0 && board[i][j][0].getAttribute("class") == user) {
+                    for (moves in possmove[i + "" + j]) {
+                        
+                        var moves_i = possmove[i + "" + j][moves][0];
+                        var moves_j = possmove[i + "" + j][moves][1];
+                        var temp = board[moves_i][moves_j];
+                        board[moves_i][moves_j] = board[i][j];
+                        board[i][j] = empty;
+                        swapuser();
+                        var score = minimax(true, depth - 1);
+                        swapuser();
+                        //if(score<bestscore){
+                        //   bestscore=score;
+                        //}
+                        bestscore = Math.min(bestscore, score);
+                        board[i][j] = board[moves_i][moves_j];
+                        board[moves_i][moves_j] = temp;
                     }
                 }
             }
