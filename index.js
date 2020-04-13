@@ -226,10 +226,13 @@ var cur_pos = '';
 var currenttroop = '';
 var cur_tr_po_mov = [];
 var cur_tr_po_mov_bg = [];
+
 var high;
 var khatra;
+
 var cboard = document.getElementById('chessboard');
 async function markPossible(source) {
+
     //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
     if (source.children.length > 0 && source.lastChild.classList[0] == "dot") {
         if (document.getElementsByClassName("check").length > 0) {
@@ -238,13 +241,18 @@ async function markPossible(source) {
             document.getElementById("results").style.display = "none";
         }
         if (source.firstChild == source.lastChild) {
+
             new Audio("move.wav").play();
         }
         else {
+
             new Audio("kill.wav").play();
         }
+
+
         source.innerHTML = currenttroop.innerHTML;
         document.getElementById(cur_pos).innerHTML = '';
+
         while (document.getElementsByClassName("dot").length > 0) {
             $('.dot').remove();
         }
@@ -304,8 +312,10 @@ async function markPossible(source) {
                 }
                 source.innerHTML = "<img class='" + user + "' name='" + selection + "' src='icons/" + selection + "_" + user + ".png'>"
                 document.getElementById("choosee").innerHTML = "";
+
             }
         }
+
         cur_pos = '';
         currenttroop = '';
         cur_tr_po_mov = [];
@@ -376,6 +386,8 @@ async function markPossible(source) {
             document.getElementById(possmov[idd][i]).appendChild(high);
             cur_tr_po_mov.push(possmov[idd][i]);
         }
+
+
     }
 }
 var king_pos;

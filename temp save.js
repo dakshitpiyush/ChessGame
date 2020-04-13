@@ -3,7 +3,7 @@ function getValue(){
     for (var i=0;i<8;i++){
         for(var j=0;j<8;j++){
             if(board[i][j].length>0){
-                value += troop_vals[board[i][j][0].getAttribute("class")][board[i][j][0].getAttribute("name")];
+                value += troop_vals[board[i][j][0].className][board[i][j][0].name];
             }
         }
     }
@@ -33,11 +33,11 @@ function donex(){
                 var oldboard = board;
                 let dest_i = possmov[scr][dest][0];
                 let dest_j = possmov[scr][dest][1];
-                /*if (board[scr_i][scr_j][0].getAttribute("name") == "king") {
+                /*if (board[scr_i][scr_j][0].name == "king") {
                     capable_castling[user]["right"] = false;
                     capable_castling[user]["left"] = false;
                 }
-                if (board[scr_i][scr_j][0].getAttribute("name") == "elephant") {
+                if (board[scr_i][scr_j][0].name == "elephant") {
                     if (getA== capable_castling[user]["i"] + "0")
                 }*/
                 console.log(possmov[scr][dest]);
@@ -142,11 +142,11 @@ function nextMove(){
                 var oldboard = board;
                 let dest_i = possmov[scr][dest][0];
                 let dest_j = possmov[scr][dest][1];
-                /*if (board[scr_i][scr_j][0].getAttribute("name") == "king") {
+                /*if (board[scr_i][scr_j][0].name == "king") {
                     capable_castling[user]["right"] = false;
                     capable_castling[user]["left"] = false;
                 }
-                if (board[scr_i][scr_j][0].getAttribute("name") == "elephant") {
+                if (board[scr_i][scr_j][0].name == "elephant") {
                     if (getA== capable_castling[user]["i"] + "0")
                 }*/
                 console.log(possmov[scr][dest]);
