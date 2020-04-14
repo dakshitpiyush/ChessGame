@@ -9,6 +9,7 @@ function update() {
 
     }
 }
+kingpos={ white:74, black:4 }; 
 var slder_offsets = {
     black: [10, 20, 9, 11, 1],
     white: [-10, -20, -9, -11, 6]
@@ -58,8 +59,10 @@ attack_offsets=[
 posattack={
     queen:1, elephant:2, camel:4, slder:8, horse:16, king:0   
 }
+movhistory=[];
 function autocalculate() {
     var possmov = {};
+    var sqare;
     for (sqare of sqares) {
         if (board[sqare] != null && board[sqare].color == user) {
             possmov[sqare] = [];
@@ -104,9 +107,38 @@ function autocalculate() {
             }
         }
     }
-    return possmov;
+    lim_pos={};
+    var opponent=swapuser();
+    for(var sqare of sqares){
+        if(possmov[sqare]===undefined) 
+            continue;
+        lim_pos[sqare] = [];
+        for(var dests of possmov[sqare]){
+            doVirtual(sqare, dests);
+            if(!isCheck(kingpos[user], opponent))
+                lim_pos[sqare].push(dests);
+            undo();
+        }
+    }
+    if(!isCheck(kingpos[user],opponent))
+        if(capable_castling[user].left)
+            if(lim_pos[kingpos[user]].includes(kingpos[user]-1) 
+                &&board[kingpos[user]-2]==null && board[kingpos[user]-3]==null
+                && isCheck(kingpos[user]-2, opponent)
+            )
+                lim_pos[kingpos[user]].push(kingpos[user]-2);
+    
+        if(capable_castling[user].right)
+            if(lim_pos[kingpos[user]].includes(kingpos[user]+1)
+                && board[kingpos[user]+2]==null
+                && isCheck(kingpos[user]+2, opponent)
+            )
+                lim_pos[kingpos[user]].push(kingpos[user]+2);
+    
+    return lim_pos;
 }
-function ifCheck(king_pos, user){
+function isCheck(king_pos, user){
+    var sqare;
     for(sqare of sqares){
         if(board[sqare]!=null && board[sqare].color==user){
             var troop=board[sqare];
@@ -136,7 +168,8 @@ function ifCheck(king_pos, user){
                     }
                     mid_sqare += sqare+offset;
                 }
-                return !blocked;
+                if(!blocked)
+                    return true;
             }
         }
     }
@@ -151,89 +184,93 @@ function getIndex(first, second){
     var factor=dec_diff-oct_diff;
     return dec_diff+(factor*2.5)+112;
 }
-/*
-//additional function for prevent self cause check to self mhanje swatala check n honya sathi
-function getfilter(possmov) {
-    var lim_pos = {};
-    var empt = document.getElementById("empty").children;
-    for (arre in possmov) {
-        var source_j = arre % 10, source_i = (arre - source_j) / 10, inc = 0;
-        lim_pos[arre] = [];
-        for (values in possmov[arre]) {
-            var dest_j = possmov[arre][values] % 10, dest_i = (possmov[arre][values] - dest_j) / 10;
-            var temp = board[dest_i][dest_j];
-            board[dest_i][dest_j] = board[source_i][source_j];
-            board[source_i][source_j] = empt;
-            swapuser();
-            if (!ifCheck()) {
-                lim_pos[arre].push(possmov[arre][values]);
-            }
-            swapuser();
-            board[source_i][source_j] = board[dest_i][dest_j];
-            board[dest_i][dest_j] = temp;
+//do virtual move
+function doVirtual(from, to){
+    var movment={
+        from:from,
+        to:to,
+        troop:board[to]
+    };
+    if(board[from].type=="king"){
+        kingpos[user]=to;
+        movment.castle=capable_castling[user];
+        capable_castling[user].right=capable_castling[user].left=false;
+        //castling
+        if(from-to == 2){
+            board[to-2]=board[to+1]
+            board[to-2]=null;
+        }else if(from-to == -2){
+            board[to+1]=board[to-1]
+            board[to+1]=null;
         }
     }
-    if (!checkbit) {
-        if (capable_castling[user]["left"]) {
-            var color = capable_castling[user]["i"];
-            if (board[color][2].length == 0 && board[color][1].length == 0 && lim_pos[color + "4"].includes(color + "3")) {
-                swapuser();
-                var cas_pos = autocalculate();
-                var bit = true;
-                for (arre in cas_pos) {
-                    if (cas_pos[arre].includes(color + "2")) {
-                        bit = false;
-                        break;
-                    }
-                }
-                swapuser();
-                if (bit) {
-                    lim_pos[color + "4"].push(color + "2");
-                }
-            }
+    else if(board[from].type=="elephant"){
+        if(from == pos[user].elephant[0]){
+            movment.castle=capable_castling[user].left;
+            capable_castling[user].left=false;
+        }else if(from == pos[user].elephant[1]){
+            movment.castle=capable_castling[user].right;
+            capable_castling[user].right=false;
         }
-        if (capable_castling[user]["right"]) {
-            var color = capable_castling[user]["i"];
-            if (board[color][6].length == 0 && lim_pos[color + "4"].includes(color + "5")) {
-                swapuser();
-                var cas_pos = autocalculate();
-                var bit = true;
-                for (arre in cas_pos) {
-                    if (cas_pos[arre].includes(color + "6")) {
-                        bit = false;
-                        break;
-                    }
-                }
-                swapuser();
-                if (bit) {
-                    lim_pos[color + "4"].push(color + "6");
-                }
-            }
+
+    }
+    if(movment.troop!=null && movment.troop.type=="elephant"){
+        var opponent=swapuser();
+        if(to == pos[opponent].elephant[0]){
+            movment.op_castle=capable_castling[opponent].left;
+            capable_castling[opponent].left=false;
+        }else if(to == pos[opponent].elephant[1]){
+            movment.op_castle=capable_castling[opponent].right;
+            capable_castling[opponent].right=false;
         }
     }
-    return lim_pos;
+    board[to]=board[from];
+    board[from]=null;
+    movhistory.push(movment);
+}
+function undo(){
+    var movment=movhistory.pop();
+    var from=movment.from;
+    var to=movment.to;
+    board[from]=board[to];
+    board[to]=movment.troop;
+
+    if(board[from].type=="king"){
+        kingpos[user]=from;
+        capable_castling[user]=movment.castle;
+        if(from-to == 2){
+            board[to+1]=board[to-2]
+            board[to+1]=null;
+        }else if(from-to == -2){
+            board[to-1]=board[to+1]
+            board[to-1]=null;
+        }
+    }
+    else if(board[from].type=="elephant"){
+        if(from == pos[user].elephant[0]){
+            capable_castling[user].left=movment.castle;
+        }else if(from == pos[user].elephant[1]){
+            capable_castling[user].right=movment.castle;
+        }
+    }
+    if(movment.troop!=null && movment.troop.type=="elephant"){
+        var opponent=swapuser();
+        if(to == pos[opponent].elephant[0]){
+            capable_castling[opponent].left=movment.op_castle;
+        }else if(to == pos[opponent].elephant[1]){
+            capable_castling[opponent].right=movment.op_castle;
+        }
+    }
 }
 update();
-//var Date = new Date();
-var intial, end;
-//var Date = new Date();
-intial = new Date().getTime();
 possmov = autocalculate();
-end = new Date().getTime();
-console.log(end - intial);
-var prev = possmov;
-var cur_pos = '';
-var currenttroop = '';
-var cur_tr_po_mov = [];
-var cur_tr_po_mov_bg = [];
 
-var high;
-var khatra;
+var prev = possmov;
+
+var currenttroop = '';
 
 var cboard = document.getElementById('chessboard');
 async function markPossible(source) {
-
-    //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
     if (source.children.length > 0 && source.lastChild.classList[0] == "dot") {
         if (document.getElementsByClassName("check").length > 0) {
             $('.check').remove();
@@ -241,17 +278,13 @@ async function markPossible(source) {
             document.getElementById("results").style.display = "none";
         }
         if (source.firstChild == source.lastChild) {
-
             new Audio("move.wav").play();
-        }
-        else {
-
+        } else {
             new Audio("kill.wav").play();
         }
 
-
         source.innerHTML = currenttroop.innerHTML;
-        document.getElementById(cur_pos).innerHTML = '';
+        currenttroop.innerHTML = '';
 
         while (document.getElementsByClassName("dot").length > 0) {
             $('.dot').remove();
@@ -316,31 +349,31 @@ async function markPossible(source) {
             }
         }
 
-        cur_pos = '';
+        
         currenttroop = '';
-        cur_tr_po_mov = [];
-        cur_tr_po_mov_bg = [];
-        checkbit = ifCheck();
+        var opponent=swapuser();
+        checkbit = isCheck(kingpos[user], opponent);
         update();
-        swapuser();
-        possmov = getfilter(autocalculate());
+        user=opponent;
+        possmov = autocalculate();
         var res = result();
         if (res == "checkmate") {
             document.getElementById("results").style.display = "block";
             audio = new Audio('mate.wav');
             audio.play();
-            khatra = document.createElement("div");
+
+            var khatra = document.createElement("div");
             khatra.classList.add("mate");
-            document.getElementById(king_pos).appendChild(khatra);
+            document.getElementById(kingpos[user]).appendChild(khatra);
             document.getElementById("results").innerHTML = "CHECK-MATE";
         }
         else if (checkbit) {
             document.getElementById("results").style.display = "block";
             audio = new Audio('check.wav');
             audio.play();
-            khatra = document.createElement("div");
+            var khatra = document.createElement("div");
             khatra.classList.add("check");
-            document.getElementById(king_pos).appendChild(khatra);
+            document.getElementById(king_pos[kingpos[user]]).appendChild(khatra);
             document.getElementById("results").innerHTML = "CHECK";
         } else if (res == "stillmate") {
             document.getElementById("results").style.display = "block";
@@ -348,9 +381,7 @@ async function markPossible(source) {
             audio.play();
             document.getElementById("results").innerHTML = "STILL-MATE";
         }
-        // (res == null) {
-            //donext();
-        //}
+    
         if (user == ai) {
             document.getElementById("chessboard").style.transform = "rotate(180deg)";
             for (els in document.getElementsByClassName("cell")) {
@@ -367,58 +398,23 @@ async function markPossible(source) {
                 }
             }
         }
-        //document.getElementsByClassName("white").style.transform="rotate(180deg)";
     }
     else if (source.children.length > 0 && source.children[0].className == user) {
         if (document.getElementsByClassName("dot").length > 0) {
             $('.dot').remove();
         }
-        cur_pos = '';
-        currenttroop = '';
-        cur_tr_po_mov = [];
-        cur_tr_po_mov_bg = [];
         var idd = source.getAttribute("id");
-        cur_pos = idd;
         currenttroop = source;
+
         for (var i = 0; i < possmov[idd].length; i++) {
-            high = document.createElement("div");
+            var high = document.createElement("div");
             high.classList.add("dot");
             document.getElementById(possmov[idd][i]).appendChild(high);
-            cur_tr_po_mov.push(possmov[idd][i]);
         }
 
+    }
+}
 
-    }
-}
-var king_pos;
-function ifCheck() {
-    for (var i = 0; i < 8; i++) {
-        for (var j = 0; j < 8; j++) {
-            if (board[i][j].length > 0) {
-                if (board[i][j][0].name == "king" && board[i][j][0].className != user) {
-                    king_pos = i + "" + j;
-                }
-            }
-        }
-    }
-    var posmov = autocalculate();          //if we use getfilter here program will colapse
-    for (arr in posmov) {
-        if (posmov[arr].includes(king_pos)) {
-            return true;
-        }
-    }
-    return false;
-}
-function swapuser() {
-    if (user == human) {
-        user = ai;
-    } else {
-        user = human;
-    }
-}
-function prevdef(event) {
-    event.preventDefault();
-}
 function result() {
     var isZeropos = true;
     for (arr in possmov) {
@@ -434,4 +430,74 @@ function result() {
     } else {
         return null;
     }
-}*/
+}
+
+function doActual(from, to){
+    
+}
+/*
+//additional function for prevent self cause check to self mhanje swatala check n honya sathi
+function getfilter(possmov) {
+    var lim_pos = {};
+    var empt = document.getElementById("empty").children;
+    for (arre in possmov) {
+        var source_j = arre % 10, source_i = (arre - source_j) / 10, inc = 0;
+        lim_pos[arre] = [];
+        for (values in possmov[arre]) {
+            var dest_j = possmov[arre][values] % 10, dest_i = (possmov[arre][values] - dest_j) / 10;
+            var temp = board[dest_i][dest_j];
+            board[dest_i][dest_j] = board[source_i][source_j];
+            board[source_i][source_j] = empt;
+            swapuser();
+            if (!ifCheck()) {
+                lim_pos[arre].push(possmov[arre][values]);
+            }
+            swapuser();
+            board[source_i][source_j] = board[dest_i][dest_j];
+            board[dest_i][dest_j] = temp;
+        }
+    }
+    if (!checkbit) {
+        if (capable_castling[user]["left"]) {
+            var color = capable_castling[user]["i"];
+            if (board[color][2].length == 0 && board[color][1].length == 0 && lim_pos[color + "4"].includes(color + "3")) {
+                swapuser();
+                var cas_pos = autocalculate();
+                var bit = true;
+                for (arre in cas_pos) {
+                    if (cas_pos[arre].includes(color + "2")) {
+                        bit = false;
+                        break;
+                    }
+                }
+                swapuser();
+                if (bit) {
+                    lim_pos[color + "4"].push(color + "2");
+                }
+            }
+        }
+        if (capable_castling[user]["right"]) {
+            var color = capable_castling[user]["i"];
+
+            if (board[color][6].length == 0 && lim_pos[color + "4"].includes(color + "5")) {
+                swapuser();
+                var cas_pos = autocalculate();
+                var bit = true;
+                for (arre in cas_pos) {
+                    if (cas_pos[arre].includes(color + "6")) {
+                        bit = false;
+                        break;
+                    }
+                }
+                swapuser();
+                if (bit) {
+                    lim_pos[color + "4"].push(color + "6");
+                }
+            }
+        }
+    }
+
+    return lim_pos;
+}
+
+*/
