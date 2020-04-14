@@ -8,6 +8,7 @@ function update() {
 
     }
 }
+kingpos={ white:74, black:4 }; 
 var slder_offsets = {
     black: [10, 20, 9, 11, 1],
     white: [-10, -20, -9, -11, 6]
@@ -57,8 +58,10 @@ attack_offsets=[
 posattack={
     queen:1, elephant:2, camel:4, slder:8, horse:16, king:0   
 }
+movhistory=[];
 function autocalculate() {
     var possmov = {};
+    var sqare;
     for (sqare of sqares) {
         if (board[sqare] != null && board[sqare].color == user) {
             possmov[sqare] = [];
@@ -103,9 +106,38 @@ function autocalculate() {
             }
         }
     }
-    return possmov;
+    lim_pos={};
+    var opponent=swapuser();
+    for(var sqare of sqares){
+        if(possmov[sqare]===undefined) 
+            continue;
+        lim_pos[sqare] = [];
+        for(var dests of possmov[sqare]){
+            doVirtual(sqare, dests);
+            if(!isCheck(kingpos[user], opponent))
+                lim_pos[sqare].push(dests);
+            undo();
+        }
+    }
+    if(!isCheck(kingpos[user],opponent))
+        if(capable_castling[user].left)
+            if(lim_pos[kingpos[user]].includes(kingpos[user]-1) 
+                &&board[kingpos[user]-2]==null && board[kingpos[user]-3]==null
+                && isCheck(kingpos[user]-2, opponent)
+            )
+                lim_pos[kingpos[user]].push(kingpos[user]-2);
+    
+        if(capable_castling[user].right)
+            if(lim_pos[kingpos[user]].includes(kingpos[user]+1)
+                && board[kingpos[user]+2]==null
+                && isCheck(kingpos[user]+2, opponent)
+            )
+                lim_pos[kingpos[user]].push(kingpos[user]+2);
+    
+    return lim_pos;
 }
-function ifCheck(king_pos, user){
+function isCheck(king_pos, user){
+    var sqare;
     for(sqare of sqares){
         if(board[sqare]!=null && board[sqare].color==user){
             var troop=board[sqare];
@@ -135,7 +167,8 @@ function ifCheck(king_pos, user){
                     }
                     mid_sqare += sqare+offset;
                 }
-                return !blocked;
+                if(!blocked)
+                    return true;
             }
         }
     }
@@ -149,6 +182,258 @@ function getIndex(first, second){
     var oct_diff=parseInt(first,8)-parseInt(second,8);
     var factor=dec_diff-oct_diff;
     return dec_diff+(factor*2.5)+112;
+}
+//do virtual move
+function doVirtual(from, to){
+    var movment={
+        from:from,
+        to:to,
+        troop:board[to]
+    };
+    if(board[from].type=="king"){
+        kingpos[user]=to;
+        movment.castle=capable_castling[user];
+        capable_castling[user].right=capable_castling[user].left=false;
+        //castling
+        if(from-to == 2){
+            board[to-2]=board[to+1]
+            board[to-2]=null;
+        }else if(from-to == -2){
+            board[to+1]=board[to-1]
+            board[to+1]=null;
+        }
+    }
+    else if(board[from].type=="elephant"){
+        if(from == pos[user].elephant[0]){
+            movment.castle=capable_castling[user].left;
+            capable_castling[user].left=false;
+        }else if(from == pos[user].elephant[1]){
+            movment.castle=capable_castling[user].right;
+            capable_castling[user].right=false;
+        }
+
+    }
+    if(movment.troop!=null && movment.troop.type=="elephant"){
+        var opponent=swapuser();
+        if(to == pos[opponent].elephant[0]){
+            movment.op_castle=capable_castling[opponent].left;
+            capable_castling[opponent].left=false;
+        }else if(to == pos[opponent].elephant[1]){
+            movment.op_castle=capable_castling[opponent].right;
+            capable_castling[opponent].right=false;
+        }
+    }
+    board[to]=board[from];
+    board[from]=null;
+    movhistory.push(movment);
+}
+function undo(){
+    var movment=movhistory.pop();
+    var from=movment.from;
+    var to=movment.to;
+    board[from]=board[to];
+    board[to]=movment.troop;
+
+    if(board[from].type=="king"){
+        kingpos[user]=from;
+        capable_castling[user]=movment.castle;
+        if(from-to == 2){
+            board[to+1]=board[to-2]
+            board[to+1]=null;
+        }else if(from-to == -2){
+            board[to-1]=board[to+1]
+            board[to-1]=null;
+        }
+    }
+    else if(board[from].type=="elephant"){
+        if(from == pos[user].elephant[0]){
+            capable_castling[user].left=movment.castle;
+        }else if(from == pos[user].elephant[1]){
+            capable_castling[user].right=movment.castle;
+        }
+    }
+    if(movment.troop!=null && movment.troop.type=="elephant"){
+        var opponent=swapuser();
+        if(to == pos[opponent].elephant[0]){
+            capable_castling[opponent].left=movment.op_castle;
+        }else if(to == pos[opponent].elephant[1]){
+            capable_castling[opponent].right=movment.op_castle;
+        }
+    }
+}
+update();
+possmov = autocalculate();
+
+var prev = possmov;
+
+var currenttroop = '';
+
+var cboard = document.getElementById('chessboard');
+async function markPossible(source) {
+    if (source.children.length > 0 && source.lastChild.classList[0] == "dot") {
+        if (document.getElementsByClassName("check").length > 0) {
+            $('.check').remove();
+            document.getElementById("results").innerHTML = "";
+            document.getElementById("results").style.display = "none";
+        }
+        if (source.firstChild == source.lastChild) {
+            new Audio("move.wav").play();
+        } else {
+            new Audio("kill.wav").play();
+        }
+
+        source.innerHTML = currenttroop.innerHTML;
+        currenttroop.innerHTML = '';
+
+        while (document.getElementsByClassName("dot").length > 0) {
+            $('.dot').remove();
+        }
+        if (source.children[0].name == "king") {
+            if (currenttroop.getAttribute("id") == capable_castling[user]["i"] + "4") {
+                if (source.getAttribute("id") == capable_castling[user]["i"] + "2") {
+                    document.getElementById(capable_castling[user]["i"] + "3").innerHTML = document.getElementById(capable_castling[user]["i"] + "0").innerHTML;
+                    document.getElementById(capable_castling[user]["i"] + "0").innerHTML = "";
+                }
+                else if (source.getAttribute("id") == capable_castling[user]["i"] + "6") {
+                    document.getElementById(capable_castling[user]["i"] + "5").innerHTML = document.getElementById(capable_castling[user]["i"] + "7").innerHTML;
+                    document.getElementById(capable_castling[user]["i"] + "7").innerHTML = "";
+                }
+            }
+        }
+        if (source.children[0].name == "king") {
+            capable_castling[user]["left"] = false;
+            capable_castling[user]["right"] = false;
+        }
+        if (source.children[0].name == "elephant") {
+            if (currenttroop.getAttribute("id") == capable_castling[user]["i"] + "0") {
+                capable_castling[user]["left"] = false;
+            }
+        }
+        if (source.children[0].name == "slder") {
+            if (Math.floor(source.getAttribute("id") / 10) == 0 || Math.floor(source.getAttribute("id") / 10) == 7) {
+                var option_list = ["queen", "horse", "camel", "elephant"];
+                var option_div = document.getElementById("choosee");
+                for (value in option_list) {
+                    option_div.innerHTML += "<input type='radio' id='" + option_list[value] + "' value='" + option_list[value] + "' name='choose_option' >";
+                    option_div.innerHTML += "<label for='" + option_list[value] + "'><img src='icons/" + option_list[value] + "_" + user + ".png'></lable>";
+                }
+                for (var i = 0; i < 8; i++) {
+                    for (var j = 0; j < 8; j++) {
+                        document.getElementById(i + "" + j).style.pointerEvents = "none";
+                    }
+                }
+                let promise = new Promise((resolve, reject) => {
+                    document.getElementsByName("choose_option")[0].onclick = function () {
+                        resolve(document.getElementsByName("choose_option")[0].value);
+                    }
+                    document.getElementsByName("choose_option")[1].onclick = function () {
+                        resolve(document.getElementsByName("choose_option")[1].value);
+                    }
+                    document.getElementsByName("choose_option")[2].onclick = function () {
+                        resolve(document.getElementsByName("choose_option")[2].value);
+                    }
+                    document.getElementsByName("choose_option")[3].onclick = function () {
+                        resolve(document.getElementsByName("choose_option")[3].value);
+                    }
+                });
+                let selection = await promise;
+                for (var i = 0; i < 8; i++) {
+                    for (var j = 0; j < 8; j++) {
+                        document.getElementById(i + "" + j).style.pointerEvents = "auto";
+                    }
+                }
+                source.innerHTML = "<img class='" + user + "' name='" + selection + "' src='icons/" + selection + "_" + user + ".png'>"
+                document.getElementById("choosee").innerHTML = "";
+
+            }
+        }
+
+        
+        currenttroop = '';
+        var opponent=swapuser();
+        checkbit = isCheck(kingpos[user], opponent);
+        update();
+        user=opponent;
+        possmov = autocalculate();
+        var res = result();
+        if (res == "checkmate") {
+            document.getElementById("results").style.display = "block";
+            audio = new Audio('mate.wav');
+            audio.play();
+
+            var khatra = document.createElement("div");
+            khatra.classList.add("mate");
+            document.getElementById(kingpos[user]).appendChild(khatra);
+            document.getElementById("results").innerHTML = "CHECK-MATE";
+        }
+        else if (checkbit) {
+            document.getElementById("results").style.display = "block";
+            audio = new Audio('check.wav');
+            audio.play();
+            var khatra = document.createElement("div");
+            khatra.classList.add("check");
+            document.getElementById(king_pos[kingpos[user]]).appendChild(khatra);
+            document.getElementById("results").innerHTML = "CHECK";
+        } else if (res == "stillmate") {
+            document.getElementById("results").style.display = "block";
+            audio = new Audio('mate.wav');
+            audio.play();
+            document.getElementById("results").innerHTML = "STILL-MATE";
+        }
+    
+        if (user == ai) {
+            document.getElementById("chessboard").style.transform = "rotate(180deg)";
+            for (els in document.getElementsByClassName("cell")) {
+                if (els < 64) {
+                    document.getElementsByClassName("cell")[els].style.transform = "rotate(180deg)";
+                }
+            }
+        }
+        else {
+            document.getElementById("chessboard").style.transform = "rotate(360deg)";
+            for (els in document.getElementsByClassName("cell")) {
+                if (els < 64) {
+                    document.getElementsByClassName("cell")[els].style.transform = "rotate(0deg)";
+                }
+            }
+        }
+    }
+    else if (source.children.length > 0 && source.children[0].className == user) {
+        if (document.getElementsByClassName("dot").length > 0) {
+            $('.dot').remove();
+        }
+
+        var idd = source.getAttribute("id");
+        currenttroop = source;
+
+        for (var i = 0; i < possmov[idd].length; i++) {
+            var high = document.createElement("div");
+            high.classList.add("dot");
+            document.getElementById(possmov[idd][i]).appendChild(high);
+        }
+
+    }
+}
+
+function result() {
+    var isZeropos = true;
+    for (arr in possmov) {
+        if (possmov[arr].length > 0) {
+            isZeropos = false;
+            break;
+        }
+    }
+    if (checkbit && isZeropos) {
+        return "checkmate";
+    } else if (isZeropos) {
+        return "stillmate";
+    } else {
+        return null;
+    }
+}
+
+function doActual(from, to){
+    
 }
 /*
 //additional function for prevent self cause check to self mhanje swatala check n honya sathi
@@ -214,230 +499,5 @@ function getfilter(possmov) {
 
     return lim_pos;
 }
-update();
-//var Date = new Date();
-var intial, end;
-//var Date = new Date();
-intial = new Date().getTime();
-possmov = autocalculate();
-end = new Date().getTime();
-console.log(end - intial);
-var prev = possmov;
-var cur_pos = '';
-var currenttroop = '';
-var cur_tr_po_mov = [];
-var cur_tr_po_mov_bg = [];
 
-var high;
-var khatra;
-
-var cboard = document.getElementById('chessboard');
-async function markPossible(source) {
-
-    //if(source.style.backgroundColor=="rgb(140, 246, 255)"){
-    if (source.children.length > 0 && source.lastChild.classList[0] == "dot") {
-        if (document.getElementsByClassName("check").length > 0) {
-            $('.check').remove();
-            document.getElementById("results").innerHTML = "";
-            document.getElementById("results").style.display = "none";
-        }
-        if (source.firstChild == source.lastChild) {
-
-            new Audio("move.wav").play();
-        }
-        else {
-
-            new Audio("kill.wav").play();
-        }
-
-
-        source.innerHTML = currenttroop.innerHTML;
-        document.getElementById(cur_pos).innerHTML = '';
-
-        while (document.getElementsByClassName("dot").length > 0) {
-            $('.dot').remove();
-        }
-        if (source.children[0].name == "king") {
-            if (currenttroop.getAttribute("id") == capable_castling[user]["i"] + "4") {
-                if (source.getAttribute("id") == capable_castling[user]["i"] + "2") {
-                    document.getElementById(capable_castling[user]["i"] + "3").innerHTML = document.getElementById(capable_castling[user]["i"] + "0").innerHTML;
-                    document.getElementById(capable_castling[user]["i"] + "0").innerHTML = "";
-                }
-                else if (source.getAttribute("id") == capable_castling[user]["i"] + "6") {
-                    document.getElementById(capable_castling[user]["i"] + "5").innerHTML = document.getElementById(capable_castling[user]["i"] + "7").innerHTML;
-                    document.getElementById(capable_castling[user]["i"] + "7").innerHTML = "";
-                }
-            }
-        }
-        if (source.children[0].name == "king") {
-            capable_castling[user]["left"] = false;
-            capable_castling[user]["right"] = false;
-        }
-        if (source.children[0].name == "elephant") {
-            if (currenttroop.getAttribute("id") == capable_castling[user]["i"] + "0") {
-                capable_castling[user]["left"] = false;
-            }
-        }
-        if (source.children[0].name == "slder") {
-            if (Math.floor(source.getAttribute("id") / 10) == 0 || Math.floor(source.getAttribute("id") / 10) == 7) {
-                var option_list = ["queen", "horse", "camel", "elephant"];
-                var option_div = document.getElementById("choosee");
-                for (value in option_list) {
-                    option_div.innerHTML += "<input type='radio' id='" + option_list[value] + "' value='" + option_list[value] + "' name='choose_option' >";
-                    option_div.innerHTML += "<label for='" + option_list[value] + "'><img src='icons/" + option_list[value] + "_" + user + ".png'></lable>";
-                }
-                for (var i = 0; i < 8; i++) {
-                    for (var j = 0; j < 8; j++) {
-                        document.getElementById(i + "" + j).style.pointerEvents = "none";
-                    }
-                }
-                let promise = new Promise((resolve, reject) => {
-                    document.getElementsByName("choose_option")[0].onclick = function () {
-                        resolve(document.getElementsByName("choose_option")[0].value);
-                    }
-                    document.getElementsByName("choose_option")[1].onclick = function () {
-                        resolve(document.getElementsByName("choose_option")[1].value);
-                    }
-                    document.getElementsByName("choose_option")[2].onclick = function () {
-                        resolve(document.getElementsByName("choose_option")[2].value);
-                    }
-                    document.getElementsByName("choose_option")[3].onclick = function () {
-                        resolve(document.getElementsByName("choose_option")[3].value);
-                    }
-                });
-                let selection = await promise;
-                for (var i = 0; i < 8; i++) {
-                    for (var j = 0; j < 8; j++) {
-                        document.getElementById(i + "" + j).style.pointerEvents = "auto";
-                    }
-                }
-                source.innerHTML = "<img class='" + user + "' name='" + selection + "' src='icons/" + selection + "_" + user + ".png'>"
-                document.getElementById("choosee").innerHTML = "";
-
-            }
-        }
-
-        cur_pos = '';
-        currenttroop = '';
-        cur_tr_po_mov = [];
-        cur_tr_po_mov_bg = [];
-        checkbit = ifCheck();
-        update();
-        swapuser();
-        possmov = getfilter(autocalculate());
-        var res = result();
-        if (res == "checkmate") {
-            document.getElementById("results").style.display = "block";
-            audio = new Audio('mate.wav');
-            audio.play();
-
-            khatra = document.createElement("div");
-            khatra.classList.add("mate");
-            document.getElementById(king_pos).appendChild(khatra);
-            document.getElementById("results").innerHTML = "CHECK-MATE";
-        }
-        else if (checkbit) {
-            document.getElementById("results").style.display = "block";
-            audio = new Audio('check.wav');
-            audio.play();
-            khatra = document.createElement("div");
-            khatra.classList.add("check");
-            document.getElementById(king_pos).appendChild(khatra);
-            document.getElementById("results").innerHTML = "CHECK";
-        } else if (res == "stillmate") {
-            document.getElementById("results").style.display = "block";
-            audio = new Audio('mate.wav');
-            audio.play();
-            document.getElementById("results").innerHTML = "STILL-MATE";
-        }
-        // (res == null) {
-            //donext();
-        //}
-
-        if (user == ai) {
-            document.getElementById("chessboard").style.transform = "rotate(180deg)";
-            for (els in document.getElementsByClassName("cell")) {
-                if (els < 64) {
-                    document.getElementsByClassName("cell")[els].style.transform = "rotate(180deg)";
-                }
-            }
-        }
-        else {
-            document.getElementById("chessboard").style.transform = "rotate(360deg)";
-            for (els in document.getElementsByClassName("cell")) {
-                if (els < 64) {
-                    document.getElementsByClassName("cell")[els].style.transform = "rotate(0deg)";
-                }
-            }
-        }
-        //document.getElementsByClassName("white").style.transform="rotate(180deg)";
-
-    }
-    else if (source.children.length > 0 && source.children[0].className == user) {
-        if (document.getElementsByClassName("dot").length > 0) {
-            $('.dot').remove();
-        }
-
-        cur_pos = '';
-        currenttroop = '';
-        cur_tr_po_mov = [];
-        cur_tr_po_mov_bg = [];
-
-        var idd = source.getAttribute("id");
-        cur_pos = idd;
-        currenttroop = source;
-        for (var i = 0; i < possmov[idd].length; i++) {
-            high = document.createElement("div");
-            high.classList.add("dot");
-            document.getElementById(possmov[idd][i]).appendChild(high);
-            cur_tr_po_mov.push(possmov[idd][i]);
-        }
-
-
-    }
-}
-var king_pos;
-function ifCheck() {
-    for (var i = 0; i < 8; i++) {
-        for (var j = 0; j < 8; j++) {
-            if (board[i][j].length > 0) {
-                if (board[i][j][0].name == "king" && board[i][j][0].className != user) {
-                    king_pos = i + "" + j;
-                }
-            }
-        }
-    }
-    var posmov = autocalculate();          //if we use getfilter here program will colapse
-    for (arr in posmov) {
-        if (posmov[arr].includes(king_pos)) {
-            return true;
-        }
-    }
-    return false;
-}
-function swapuser() {
-    if (user == human) {
-        user = ai;
-    } else {
-        user = human;
-    }
-}
-function prevdef(event) {
-    event.preventDefault();
-}
-function result() {
-    var isZeropos = true;
-    for (arr in possmov) {
-        if (possmov[arr].length > 0) {
-            isZeropos = false;
-            break;
-        }
-    }
-    if (checkbit && isZeropos) {
-        return "checkmate";
-    } else if (isZeropos) {
-        return "stillmate";
-    } else {
-        return null;
-    }
-}*/
+*/
