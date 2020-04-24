@@ -232,7 +232,7 @@ function doVirtual(move, user, opponent) {
     if (move.castle) {
         board[move.castle.to] = board[move.castle.from];
         board[move.castle.from] = null;
-        capabale_castling[user] = 0;
+        capable_castling[user] = 0;
     } else {
         if (move.promoteTo) {
             board[move.from].type = move.promoteTo;
