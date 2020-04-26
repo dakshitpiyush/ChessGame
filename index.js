@@ -4,9 +4,9 @@
 var possmov = [];
 var board = [];
 function update() {
+    var cell = document.getElementsByTagName("td");
     for (var i = 0; i < document.getElementsByTagName("td").length; i++) {
-        board[parseInt(document.getElementsByTagName("td")[i].id)] = document.getElementsByTagName("td")[i].children.length > 0 ? { type: document.getElementsByTagName("td")[i].children[0].name, color: document.getElementsByTagName("td")[i].children[0].className } : null;
-
+        board[parseInt(cell[i].id)] = cell[i].children.length ? { type: cell[i].children[0].name, color: cell[i].children[0].className } : null;
     }
 }
 var kingpos = { white: 109, black: 4 };
@@ -21,7 +21,7 @@ var other_offsets = {
     horse: [31, 29, -31, -29, 17, 13, -17, -13],
     king: [15, 16, -15, -16, 1, -1, 14, -14]
 };
-attacks = [
+var attacks = [
     4, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4,
     0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0,
     0, 0, 4, 0, 0, 0, 0, 2, 0, 0, 0, 0, 4, 0, 0,
@@ -38,7 +38,7 @@ attacks = [
     0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0,
     4, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4
 ]
-attack_offsets = [
+var attack_offsets = [
     16, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 14,
     0, 16, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 14, 0,
     0, 0, 16, 0, 0, 0, 0, 15, 0, 0, 0, 0, 14, 0, 0,
@@ -142,9 +142,9 @@ function autocalculate(user, opponent) {
             var from = kingpos[user], to = kingpos[user] - 2;
             if (
                 board[from - 1] == null
-                && isCheck(from - 1, opponent)
+                && !isCheck(from - 1, opponent)
                 && board[to] == null
-                && isCheck(to, opponent)
+                && !isCheck(to, opponent)
                 && board[to - 1] == null
             )
                 lim_pos.push({
@@ -162,9 +162,9 @@ function autocalculate(user, opponent) {
             var from = kingpos[user], to = kingpos[user] + 2;
             if (
                 board[from + 1] == null
-                && isCheck(from + 1, opponent)
+                && !isCheck(from + 1, opponent)
                 && board[to] == null
-                && isCheck(to, opponent)
+                && !isCheck(to, opponent)
             )
                 lim_pos.push({
                     from: from,
@@ -233,6 +233,7 @@ function doVirtual(move, user, opponent) {
     if (move.castle) {
         board[move.castle.to] = board[move.castle.from];
         board[move.castle.from] = null;
+        kingpos[user] = move.to;
         capable_castling[user] = 0;
     } else {
         if (move.promoteTo) {
@@ -250,13 +251,14 @@ function doVirtual(move, user, opponent) {
     board[move.to] = board[move.from];
     board[move.from] = null;
 }
-function undo(move, user, opponent) {
+function undoVirtual(move, user, opponent) {
     board[move.from] = board[move.to];
     board[move.to] = move.troop;
     if (move.castle) {
         board[move.castle.from] = board[move.castle.to];
         board[move.castle.to] = null;
-        capabale_castling[user] = move.castle.cc;
+        kingpos[user] = move.from;
+        capable_castling[user] = move.castle.cc;
     } else {
         if (move.promoteTo) {
             board[move.from].type = "slder";
@@ -291,144 +293,18 @@ function getToArray(from) {
     }
     return toArray;
 }
+function getMove(from, to) {
+    var len = possmov.length;
+    for (var i = 0; i < possmov.length; i++)
+        if (from == possmov[i].from && to == possmov[i].to)
+            return possmov[i];
+}
 function ecoem(sqare, user) {
     return pos[user]["elephant"].indexOf(sqare) + 1 & capable_castling[user];
 }
 function iskm(sqare, user) {
     if (sqare == kingpos[user])
         return capable_castling[user] + 1;
-}
-update();
-possmov = autocalculate(user, opponent);
-var currenttroop = '';
-var cboard = document.getElementById('chessboard');
-async function markPossible(source) {
-    if (source.children.length > 0 && source.lastChild.classList[0] == "dot") {
-        if (document.getElementsByClassName("check").length > 0) {
-            $('.check').remove();
-            document.getElementById("results").innerHTML = "";
-            document.getElementById("results").style.display = "none";
-        }
-        if (source.firstChild == source.lastChild) {
-            new Audio("move.wav").play();
-        } else {
-            new Audio("kill.wav").play();
-        }
-
-        source.innerHTML = currenttroop.innerHTML;
-        currenttroop.innerHTML = '';
-        var from = parseInt(currenttroop.id);
-        var to = parseInt(source.id);
-
-        while (document.getElementsByClassName("dot").length > 0) {
-            $('.dot').remove();
-        }
-        if (source.children[0].name == "king") {
-            if (from - to == 2) {
-                document.getElementById(to + 1).innerHTML = document.getElementById(to - 2).innerHTML
-                document.getElementById(to + 1).innerHTML = "";
-            } else if (from - to == -2) {
-                document.getElementById(to + 1).innerHTML = document.getElementById(to - 1).innerHTML
-                document.getElementById(to + 1).innerHTML = "";
-            }
-        }
-
-        if (source.children[0].name == "slder") {
-            if (to < 8 || to > 67) {
-                var option_list = ["queen", "horse", "camel", "elephant"];
-                var option_div = document.getElementById("choosee");
-                for (value in option_list) {
-                    option_div.innerHTML += "<input type='radio' id='" + option_list[value] + "' value='" + option_list[value] + "' name='choose_option' >";
-                    option_div.innerHTML += "<label for='" + option_list[value] + "'><img src='icons/" + option_list[value] + "_" + user + ".png'></lable>";
-                }
-                for (sqare of sqares) {
-                    document.getElementById(sqare).style.pointerEvents = "none";
-                }
-                let promise = new Promise((resolve, reject) => {
-                    document.getElementsByName("choose_option")[0].onclick = function () {
-                        resolve(document.getElementsByName("choose_option")[0].value);
-                    }
-                    document.getElementsByName("choose_option")[1].onclick = function () {
-                        resolve(document.getElementsByName("choose_option")[1].value);
-                    }
-                    document.getElementsByName("choose_option")[2].onclick = function () {
-                        resolve(document.getElementsByName("choose_option")[2].value);
-                    }
-                    document.getElementsByName("choose_option")[3].onclick = function () {
-                        resolve(document.getElementsByName("choose_option")[3].value);
-                    }
-                });
-                let selection = await promise;
-                for (sqare of sqares) {
-                    document.getElementById(sqare).style.pointerEvents = "auto";
-                }
-                source.innerHTML = "<img class='" + user + "' name='" + selection + "' src='icons/" + selection + "_" + user + ".png'>"
-                document.getElementById("choosee").innerHTML = "";
-
-            }
-        }
-
-        doVirtual({ from: from, to: to });
-        currenttroop = '';
-        checkbit = isCheck(kingpos[opponent], user);
-        swapuser();
-        possmov = autocalculate(user, opponent);
-        var res = result();
-        if (res == "checkmate") {
-            document.getElementById("results").style.display = "block";
-            audio = new Audio('mate.wav');
-            audio.play();
-
-            var khatra = document.createElement("div");
-            khatra.classList.add("mate");
-            document.getElementById(kingpos[user]).appendChild(khatra);
-            document.getElementById("results").innerHTML = "CHECK-MATE";
-        }
-        else if (checkbit) {
-            document.getElementById("results").style.display = "block";
-            audio = new Audio('check.wav');
-            audio.play();
-            var khatra = document.createElement("div");
-            khatra.classList.add("check");
-            document.getElementById(kingpos[user]).appendChild(khatra);
-            document.getElementById("results").innerHTML = "CHECK";
-        } else if (res == "stillmate") {
-            document.getElementById("results").style.display = "block";
-            audio = new Audio('mate.wav');
-            audio.play();
-            document.getElementById("results").innerHTML = "STILL-MATE";
-        }
-        if (user == ai) {
-            document.getElementById("chessboard").style.transform = "rotate(180deg)";
-            for (els in document.getElementsByClassName("cell")) {
-                if (els < 64) {
-                    document.getElementsByClassName("cell")[els].style.transform = "rotate(180deg)";
-                }
-            }
-        } else {
-            document.getElementById("chessboard").style.transform = "rotate(360deg)";
-            for (els in document.getElementsByClassName("cell")) {
-                if (els < 64) {
-                    document.getElementsByClassName("cell")[els].style.transform = "rotate(0deg)";
-                }
-            }
-        }
-        if (res == null && user == ai)
-            donext();
-
-    }
-    else {
-        if (document.getElementsByClassName("dot").length > 0) {
-            $('.dot').remove();
-        }
-        var toArray = getToArray(parseInt(source.id));
-        currenttroop = source;
-        for (var i = 0; i < toArray.length; i++) {
-            var high = document.createElement("div");
-            high.classList.add("dot");
-            document.getElementById(toArray[i]).appendChild(high);
-        }
-    }
 }
 function result() {
     var isZeropos = !possmov.length;
@@ -440,8 +316,182 @@ function result() {
         return null;
     }
 }
+var res = "";
+async function doActual(move) {
+    if (document.getElementsByClassName("check").length) {
+        $('.check').remove();
+        document.getElementById("results").innerHTML = "";
+        document.getElementById("results").style.display = "none";
+    }
+    if (move.troop)
+        new Audio("kill.wav").play();
+    else
+        new Audio("move.wav").play();
+    if (move.castle) {
+        document.getElementById(move.castle.to).innerHTML = document.getElementById(move.castle.from).innerHTML;
+        document.getElementById(move.castle.from).innerHTML = null;
+        board[move.castle.to] = board[move.castle.from];
+        board[move.castle.from] = null;
+        kingpos[user] = move.to;
+        capable_castling[user] = 0;
+    } else {
+        if (move.promoteTo) {
+            if (user == human) {
+                var option_list = ["queen", "horse", "camel", "elephant"];
+                var option_div = document.getElementById("choosee");
+                for (value in option_list) {
+                    option_div.innerHTML += "<input type='radio' id='" + option_list[value] + "' value='" + option_list[value] + "' name='choose_option' >";
+                    option_div.innerHTML += "<label for='" + option_list[value] + "'><img src='icons/" + option_list[value] + "_" + user + ".png'></lable>";
+                }
+                for (sqare of sqares) {
+                    document.getElementById(sqare).style.pointerEvents = "none";
+                }
+                let promise = new Promise((resolve, reject) => {
+                    var choosee_box = document.getElementsByName("choose_option");
+                    choosee_box[0].onclick = function () {
+                        resolve(choosee_box[0].value);
+                    }
+                    choosee_box[1].onclick = function () {
+                        resolve(choosee_box[1].value);
+                    }
+                    choosee_box[2].onclick = function () {
+                        resolve(choosee_box[2].value);
+                    }
+                    choosee_box[3].onclick = function () {
+                        resolve(choosee_box[3].value);
+                    }
+                });
+                move.promoteTo = await promise;
+                for (sqare of sqares) {
+                    document.getElementById(sqare).style.pointerEvents = "auto";
+                }
+                document.getElementById("choosee").innerHTML = "";
+            }
+            document.getElementById(move.from).innerHTML = "<img class='" + user + "' name='" + move.promoteTo + "' src='icons/" + move.promoteTo + "_" + user + ".png'>"
+            board[move.from].type = move.promoteTo;
+        } else {
+            if (move.km) {
+                capable_castling[user] = 0;
+                kingpos[user] = move.to;
+            } else {
+                capable_castling[user] -= move.em ? move.em : 0
+            }
+        }
+        capable_castling[opponent] -= move.ec ? move.ec : 0
+    }
+    document.getElementById(move.to).innerHTML = document.getElementById(move.from).innerHTML;
+    document.getElementById(move.from).innerHTML = null;
+    board[move.to] = board[move.from];
+    board[move.from] = null;
+    movhistory.push(move);
 
-function doActual(move) {
-    markPossible(document.getElementById(move.from));
-    markPossible(document.getElementById(move.to));
+    checkbit = isCheck(kingpos[opponent], user);
+    swapuser();
+    possmov = autocalculate(user, opponent);
+    res = result();
+    if (res == "checkmate") {
+        document.getElementById("results").style.display = "block";
+        audio = new Audio('mate.wav');
+        audio.play();
+
+        var khatra = document.createElement("div");
+        khatra.classList.add("mate");
+        document.getElementById(kingpos[user]).appendChild(khatra);
+        document.getElementById("results").innerHTML = "CHECK-MATE";
+    }
+    else if (checkbit) {
+        document.getElementById("results").style.display = "block";
+        audio = new Audio('check.wav');
+        audio.play();
+        var khatra = document.createElement("div");
+        khatra.classList.add("check");
+        document.getElementById(kingpos[user]).appendChild(khatra);
+        document.getElementById("results").innerHTML = "CHECK";
+    } else if (res == "stillmate") {
+        document.getElementById("results").style.display = "block";
+        audio = new Audio('mate.wav');
+        audio.play();
+        document.getElementById("results").innerHTML = "STILL-MATE";
+    }
+    document.documentElement.style.setProperty('--rot', user == "white" ? '0deg' : '180deg');
+}
+function undo() {
+    if (document.getElementsByClassName("check").length) {
+        $('.check').remove();
+        document.getElementById("results").innerHTML = "";
+        document.getElementById("results").style.display = "none";
+    }
+    var move = movhistory.pop();
+    if (!move)
+        return null;
+    document.getElementById(move.from).innerHTML = document.getElementById(move.to).innerHTML;
+    document.getElementById(move.to).innerHTML = move.troop ? "<img class='" + move.troop.color + "' name='" + move.troop.type + "' src='icons/" + move.troop.type + "_" + move.troop.color + ".png'>" : null;
+    board[move.from] = board[move.to];
+    board[move.to] = move.troop;
+    swapuser();
+    if (move.castle) {
+        document.getElementById(move.castle.from).innerHTML = document.getElementById(move.castle.to).innerHTML;
+        document.getElementById(move.castle.to).innerHTML = '';
+        board[move.castle.from] = board[move.castle.to];
+        board[move.castle.to] = null;
+        kingpos[user] = move.from;
+        capable_castling[user] = move.castle.cc;
+    } else {
+        if (move.promoteTo) {
+            document.getElementById(move.from).innerHTML = "<img class='" + user + "' name='slder' src='icons/slder_" + user + ".png'>"
+            board[move.from].type = "slder";
+        } else {
+            if (move.km) {
+                capable_castling[user] = move.km - 1;
+                kingpos[user] = move.from;
+            } else {
+                capable_castling[user] += move.em ? move.em : 0
+            }
+        }
+        capable_castling[opponent] += move.ec ? move.ec : 0
+    }
+
+    checkbit = isCheck(kingpos[opponent], user);
+    possmov = autocalculate(user, opponent);
+    if (checkbit) {
+        document.getElementById("results").style.display = "block";
+        audio = new Audio('check.wav');
+        audio.play();
+        var khatra = document.createElement("div");
+        khatra.classList.add("check");
+        document.getElementById(kingpos[user]).appendChild(khatra);
+        document.getElementById("results").innerHTML = "CHECK";
+    }
+    document.documentElement.style.setProperty('--rot', user == "white" ? '0deg' : '180deg');
+    return move;
+}
+update();
+possmov = autocalculate(user, opponent);
+var currentTroop;
+async function markPossible(source) {
+    if (source.children.length > 0 && source.lastChild.classList[0] == "dot") {
+        while (document.getElementsByClassName("dot").length > 0) {
+            $('.dot').remove();
+        }
+        var move = getMove(currentTroop, parseInt(source.id));
+        doActual(move);
+        currentTroop = '';
+        if (res == null && user == ai) {
+            //donext();
+        }
+
+
+    }
+    else {
+        if (document.getElementsByClassName("dot").length > 0) {
+            $('.dot').remove();
+        }
+        currentTroop = parseInt(source.id);
+        var toArray = getToArray(currentTroop);
+        for (var i = 0; i < toArray.length; i++) {
+            var high = document.createElement("div");
+            high.classList.add("dot");
+            document.getElementById(toArray[i]).appendChild(high);
+        }
+    }
 }

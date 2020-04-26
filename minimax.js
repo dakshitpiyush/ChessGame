@@ -19,15 +19,16 @@ function donext() {
     var bestscore = -Infinity;
     var bestmove;
     for (var move of possmov) {
-        doVirtual(move);
+        doVirtual(move, user, opponent);
         var score = minmax(false, 3, opponent, user);
         if (score > bestscore) {
             bestscore = score;
             bestmove = move;
         }
-        undo(move);
+        undoVirtual(move, user, opponent);
     }
     console.log(mesure + "moves tested");
+    mesure = 0;
     doActual(bestmove);
 }
 function minmax(ismax, depth, user, opponent) {
@@ -41,7 +42,7 @@ function minmax(ismax, depth, user, opponent) {
         for (var move of posmv) {
             doVirtual(move, user, opponent);
             var score = minmax(false, depth - 1, opponent, user);
-            undo(move, user, opponent);
+            undoVirtual(move, user, opponent);
             bestscore = Math.max(score, bestscore);
         }
         return bestscore;
@@ -51,7 +52,7 @@ function minmax(ismax, depth, user, opponent) {
         for (var move of posmv) {
             doVirtual(move, user, opponent);
             var score = minmax(true, depth - 1, user, opponent);
-            undo(move, user, opponent);
+            undoVirtual(move, user, opponent);
             bestscore = Math.min(score, bestscore);
         }
         return bestscore;
