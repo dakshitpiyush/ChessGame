@@ -25,6 +25,8 @@ function donext() {
             bestscore = score;
             bestmove = move;
         }
+        //console.log(move);
+        //console.log(score);
         undoVirtual(move, user, opponent);
     }
     console.log(mesure + "moves tested");
@@ -38,24 +40,27 @@ function minmax(ismax, depth, user, opponent) {
     }
     if (ismax) {
         var posmv = autocalculate(user, opponent);
-        var bestscore = -9999;
+        var bestscore = -9999, score;
         for (var move of posmv) {
             doVirtual(move, user, opponent);
-            var score = minmax(false, depth - 1, opponent, user);
+            score = minmax(false, depth - 1, opponent, user);
             undoVirtual(move, user, opponent);
+            //console.log(move);
+            //console.log(score);
             bestscore = Math.max(score, bestscore);
         }
-        return bestscore;
     } else {
         var posmv = autocalculate(user, opponent);
-        var bestscore = 9999;
+        var bestscore = 9999, score;
         for (var move of posmv) {
             doVirtual(move, user, opponent);
-            var score = minmax(true, depth - 1, user, opponent);
+            score = minmax(true, depth - 1, opponent, user);
             undoVirtual(move, user, opponent);
+            //console.log(move);
+            //console.log(score);
             bestscore = Math.min(score, bestscore);
         }
-        return bestscore;
     }
+    return bestscore;
 }
 

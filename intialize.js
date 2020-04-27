@@ -25,7 +25,7 @@ var capable_castling = {
 var ind = 0, jnd = 0;
 var pos = {
     black: {
-        elephant: [0, 7],
+        elephant: [7, 0],
         horse: [1, 6],
         camel: [2, 5],
         queen: [3],
@@ -33,7 +33,7 @@ var pos = {
         slder: [15, 16, 17, 18, 19, 20, 21, 22]
     },
     white: {
-        elephant: [105, 112],
+        elephant: [112, 105],
         horse: [106, 111],
         camel: [107, 110],
         queen: [108],

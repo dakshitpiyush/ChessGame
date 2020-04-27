@@ -425,7 +425,7 @@ function undo() {
     if (!move)
         return null;
     document.getElementById(move.from).innerHTML = document.getElementById(move.to).innerHTML;
-    document.getElementById(move.to).innerHTML = move.troop ? "<img class='" + move.troop.color + "' name='" + move.troop.type + "' src='icons/" + move.troop.type + "_" + move.troop.color + ".png'>" : null;
+    document.getElementById(move.to).innerHTML = move.troop ? "<img class='" + move.troop.color + "' name='" + move.troop.type + "' src='icons/" + move.troop.type + "_" + move.troop.color + ".png draggable='true' ondragstart='markPossible(this.parentElement)'>" : null;
     board[move.from] = board[move.to];
     board[move.to] = move.troop;
     swapuser();
@@ -451,7 +451,7 @@ function undo() {
         capable_castling[opponent] += move.ec ? move.ec : 0
     }
 
-    checkbit = isCheck(kingpos[opponent], user);
+    checkbit = isCheck(kingpos[opponent], user); s
     possmov = autocalculate(user, opponent);
     if (checkbit) {
         document.getElementById("results").style.display = "block";
@@ -477,7 +477,7 @@ async function markPossible(source) {
         doActual(move);
         currentTroop = '';
         if (res == null && user == ai) {
-            //donext();
+            donext();
         }
 
 
