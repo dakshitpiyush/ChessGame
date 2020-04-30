@@ -413,7 +413,7 @@ async function doActual(move) {
         audio.play();
         document.getElementById("results").innerHTML = "STILL-MATE";
     }
-    document.documentElement.style.setProperty('--rot', user == "white" ? '0deg' : '180deg');
+    //document.documentElement.style.setProperty('--rot', user == "white" ? '0deg' : '180deg');
 }
 function undo() {
     if (document.getElementsByClassName("check").length) {
@@ -425,7 +425,7 @@ function undo() {
     if (!move)
         return null;
     document.getElementById(move.from).innerHTML = document.getElementById(move.to).innerHTML;
-    document.getElementById(move.to).innerHTML = move.troop ? "<img class='" + move.troop.color + "' name='" + move.troop.type + "' src='icons/" + move.troop.type + "_" + move.troop.color + ".png draggable='true' ondragstart='markPossible(this.parentElement)'>" : null;
+    document.getElementById(move.to).innerHTML = move.troop ? "<img class='" + move.troop.color + "' name='" + move.troop.type + "' src='icons/" + move.troop.type + "_" + move.troop.color + ".png' draggable='true' ondragstart='markPossible(this.parentElement)'>" : null;
     board[move.from] = board[move.to];
     board[move.to] = move.troop;
     swapuser();
@@ -451,7 +451,7 @@ function undo() {
         capable_castling[opponent] += move.ec ? move.ec : 0
     }
 
-    checkbit = isCheck(kingpos[opponent], user); s
+    checkbit = isCheck(kingpos[opponent], user);
     possmov = autocalculate(user, opponent);
     if (checkbit) {
         document.getElementById("results").style.display = "block";
@@ -462,7 +462,7 @@ function undo() {
         document.getElementById(kingpos[user]).appendChild(khatra);
         document.getElementById("results").innerHTML = "CHECK";
     }
-    document.documentElement.style.setProperty('--rot', user == "white" ? '0deg' : '180deg');
+    //document.documentElement.style.setProperty('--rot', user == "white" ? '360deg' : '180deg');
     return move;
 }
 update();
@@ -477,9 +477,8 @@ async function markPossible(source) {
         doActual(move);
         currentTroop = '';
         if (res == null && user == ai) {
-            donext();
+            setTimeout(function () { donext() }, 0);
         }
-
 
     }
     else {
