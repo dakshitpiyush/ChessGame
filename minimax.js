@@ -1,19 +1,14 @@
 function getValue() {
-    var value = 0, i, sqare;
+    var value = 0, i;
     for (i = 0; i < 120; i++) {
         if (board[i])
             value += troop_vals[board[i].color][board[i].type];
     }
     return value;
 }
-var troop_vals = {
-    black: {
-        king: 90, queen: 9, elephant: 5, camel: 3, horse: 3, slder: 1
-    },
-    white: {
-        king: -90, queen: -9, elephant: -5, camel: -3, horse: -3, slder: -1
-    }
-};
+var troop_vals = {};
+troop_vals[ai] = { king: 90, queen: 9, elephant: 5, camel: 3, horse: 3, slder: 1 };
+troop_vals[human] = { king: -90, queen: -9, elephant: -5, camel: -3, horse: -3, slder: -1 };
 var mesure = 0;
 function donext() {
     var bestscore = -Infinity;
@@ -41,9 +36,8 @@ function minmax(ismax, depth, user, opponent, alpha, beta) {
         var bestscore = -9999, score;
         for (var move of posmv) {
             doVirtual(move, user, opponent);
-            score = minmax(false, depth - 1, opponent, user, alpha, beta);
+            bestscore = Math.max(minmax(false, depth - 1, opponent, user, alpha, beta), bestscore);
             undoVirtual(move, user, opponent);
-            bestscore = Math.max(score, bestscore);
             alpha = Math.max(alpha, bestscore);
             if (beta <= alpha) {
                 return bestscore;
@@ -54,9 +48,8 @@ function minmax(ismax, depth, user, opponent, alpha, beta) {
         var bestscore = 9999, score;
         for (var move of posmv) {
             doVirtual(move, user, opponent);
-            score = minmax(true, depth - 1, opponent, user, alpha, beta);
+            bestscore = Math.min(minmax(true, depth - 1, opponent, user, alpha, beta), bestscore);
             undoVirtual(move, user, opponent);
-            bestscore = Math.min(score, bestscore);
             beta = Math.min(beta, bestscore);
             if (beta <= alpha) {
                 return bestscore;
