@@ -531,7 +531,6 @@ async function markPossible(source) {
         if (res == null && user == ai) {
             setTimeout(function () { donext() }, 0);
         }
-
     }
     else {
         if (document.getElementsByClassName("dot").length > 0) {

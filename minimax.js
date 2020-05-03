@@ -15,7 +15,7 @@ function donext() {
     var bestmove;
     for (var move of possmov) {
         doVirtual(move, user, opponent);
-        var score = minmax(false, 3, opponent, user, -10000, 10000);
+        var score = minmax(false, 3, opponent, user, bestscore, 10000);
         if (score > bestscore) {
             bestscore = score;
             bestmove = move;
@@ -58,4 +58,3 @@ function minmax(ismax, depth, user, opponent, alpha, beta) {
     }
     return bestscore;
 }
-

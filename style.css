@@ -129,3 +129,19 @@ select#choose option[value="queen"] { background-image:url("icons/queen_black.pn
     font-family: calibri;
     cursor: pointer;
   }
+  #choose_user{
+    width: 500px;
+    margin: auto;
+    height: 300px;
+    box-shadow: 2px 3px 10px 6px #686060;
+    position: absolute;
+    z-index: 5;
+    top: 25%;
+    right: 30%;
+    background-color: white;
+    display:flex;
+  }
+  .user_sel{
+    width:49%;
+    height:75%;
+  }
