@@ -7,8 +7,7 @@ function getValue() {
     return value;
 }
 var troop_vals = {};
-troop_vals[ai] = { king: 90, queen: 9, elephant: 5, camel: 3, horse: 3, slder: 1 };
-troop_vals[human] = { king: -90, queen: -9, elephant: -5, camel: -3, horse: -3, slder: -1 };
+
 var mesure = 0;
 function donext() {
     var bestscore = -Infinity;

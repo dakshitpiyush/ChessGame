@@ -11,8 +11,8 @@ body{
     transform: rotate(var(--rot));
 }
 .cell{
-    width: 75px;
-    height:75px;
+    width: 70px;
+    height:70px;
     border:1px solid #7f5733;
     cursor:pointer;
     position: relative;
@@ -145,3 +145,90 @@ select#choose option[value="queen"] { background-image:url("icons/queen_black.pn
     width:49%;
     height:75%;
   }
+  .modal {
+    display: block; 
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 10px;
+    border: 1px solid #88ff;
+    width: 600px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    border-radius:5px;
+  }
+  
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+  
+  }
+  
+  @keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+  }
+    
+  .modal-body {
+  padding: 2px 16px;
+  
+  }
+
+.selection {
+    border: 1px solid green;
+    border-radius: 10px;
+    margin: 10px 25px 10px 25px;
+    display: inline-block;
+    padding: 10px;
+}
+.selection:hover{
+  border: 3px solid blue;
+}
+.selection img {
+  width:100px;
+}
+#select{
+  margin: auto;
+  display: table;
+}
+#fname{
+  margin: auto;
+  display: flex;
+  width: 80%;
+  border-radius: 5px;
+  border: 1px solid rgb(136, 115, 115);
+  height: 40px;
+  font-size: 20px;
+  padding: 10px;
+  font-style: italic;
+}
+#start{
+  background-color:rgb(245, 60, 60);
+  border-radius: 5px;
+  margin: auto;
+  display:flex;
+  border: 0px;
+  box-shadow: none;
+  color: white;
+  padding: 15px 30px;
+  font-size: 20px;
+  cursor: pointer;
+}

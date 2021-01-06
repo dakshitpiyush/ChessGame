@@ -1,4 +1,4 @@
-//creating board
+
 var sqares = [
     0, 1, 2, 3, 4, 5, 6, 7,
     15, 16, 17, 18, 19, 20, 21, 22,
@@ -9,6 +9,7 @@ var sqares = [
     90, 91, 92, 93, 94, 95, 96, 97,
     105, 106, 107, 108, 109, 110, 111, 112
 ];
+
 var cboard = document.getElementById('chessboard');
 for (sqare of sqares) {
     if (sqare % 15 == 0) {
@@ -50,22 +51,60 @@ for (color in pos) {
         }
     }
 }
-var human = "white", ai = "black";
+var human, ai;
+function selectColor(){
+    var whiteRdButton=document.getElementById("white_select");
+    var blackRdButton=document.getElementById("black_select");
+    if(whiteRdButton.checked){
+        document.getElementsByClassName("selection")[0].style.border="4px solid blue";
+        document.getElementsByClassName("selection")[1].style.border="1px solid green";
+    }
+    if(blackRdButton.checked){
+        document.getElementsByClassName("selection")[1].style.border="4px solid blue";
+        document.getElementsByClassName("selection")[0].style.border="1px solid green";
+    }
+}
+function startGame(){
+    var whiteRdButton=document.getElementById("white_select");
+    var blackRdButton=document.getElementById("black_select");
+    var usernameBox=document.getElementById("fname");
+    if((whiteRdButton.checked || blackRdButton.checked) && (!usernameBox.value=="")){
+        document.getElementById("myModal").style.display="none";
+        if(whiteRdButton.checked){
+            human="white";
+            ai="black";
+            troop_vals[ai] = { king: 90, queen: 9, elephant: 5, camel: 3, horse: 3, slder: 1 };
+            troop_vals[human] = { king: -90, queen: -9, elephant: -5, camel: -3, horse: -3, slder: -1 };
+        }else{
+            human="black";
+            ai="white";
+            troop_vals[ai] = { king: 90, queen: 9, elephant: 5, camel: 3, horse: 3, slder: 1 };
+            troop_vals[human] = { king: -90, queen: -9, elephant: -5, camel: -3, horse: -3, slder: -1 };
+            document.documentElement.style.setProperty('--rot', '180deg')
+            donext();
+        }
+    }else{
+        document.getElementById("errmsg").innerText="Please enter name and select color";
+    }
+}
 var user = "white", opponent = "black";
 var checkbit = false;
 var possmov = [];
 var board = [];
+
 function update() {
     var cell = document.getElementsByTagName("td");
     for (var i = 0; i < document.getElementsByTagName("td").length; i++) {
         board[parseInt(cell[i].id)] = cell[i].children.length ? { type: cell[i].children[0].name, color: cell[i].children[0].className } : null;
     }
 }
+
 var kingpos = { white: 109, black: 4 };
 var slder_offsets = {
     black: [15, 30, 14, 16, 1],
     white: [-15, -30, -14, -16, 6]
 };
+
 var other_offsets = {
     elephant: [15, -15, 1, -1],
     camel: [14, -14, 16, -16],
@@ -73,6 +112,7 @@ var other_offsets = {
     horse: [31, 29, -31, -29, 17, 13, -17, -13],
     king: [15, 16, -15, -16, 1, -1, 14, -14]
 };
+
 var attacks = [
     4, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4,
     0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0,
@@ -90,6 +130,7 @@ var attacks = [
     0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 4, 0,
     4, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 4
 ]
+
 var attack_offsets = [
     16, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 14,
     0, 16, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 14, 0,
@@ -108,10 +149,11 @@ var attack_offsets = [
     -14, 0, 0, 0, 0, 0, 0, -15, 0, 0, 0, 0, 0, 0, -16,
 
 ];
-posattack = {
-    queen: 6, elephant: 2, camel: 4, slder: 8, horse: 16, king: 1
-}
+
+posattack = { queen: 6, elephant: 2, camel: 4, slder: 8, horse: 16, king: 1}
+
 movhistory = [];
+
 function autocalculate(user, opponent) {
     function promote(from, to, troop, ec) {
         if (to < 8 || to > 104) {
@@ -181,6 +223,7 @@ function autocalculate(user, opponent) {
             }
         }
     }
+
     lim_pos = [];
     var i;
     for (i = 0; i < possmov.length; i++) {
@@ -189,6 +232,7 @@ function autocalculate(user, opponent) {
             lim_pos.push(possmov[i]);
         undocheck(possmov[i], user);
     }
+
     if (!isCheck(kingpos[user], opponent)) {
         if (capable_castling[user] & 2) {
             var from = kingpos[user], to = kingpos[user] - 2;
@@ -210,6 +254,7 @@ function autocalculate(user, opponent) {
                     }
                 });
         }
+
         if (capable_castling[user] & 1) {
             var from = kingpos[user], to = kingpos[user] + 2;
             if (
@@ -229,12 +274,10 @@ function autocalculate(user, opponent) {
                     }
                 });
         }
-
-
     }
-
     return lim_pos;
 }
+
 function isCheck(king_pos, user) {
     var sqare;
     var i;
@@ -275,6 +318,7 @@ function isCheck(king_pos, user) {
     }
     return false;
 }
+
 function swapuser() {
     var temp = opponent;
     opponent = user;
@@ -303,6 +347,7 @@ function doVirtual(move, user, opponent) {
     board[move.to] = board[move.from];
     board[move.from] = null;
 }
+
 function undoVirtual(move, user, opponent) {
     board[move.from] = board[move.to];
     board[move.to] = move.troop;
@@ -325,18 +370,21 @@ function undoVirtual(move, user, opponent) {
         capable_castling[opponent] += move.ec ? move.ec : 0
     }
 }
+
 function docheck(move, user) {
     board[move.to] = board[move.from];
     board[move.from] = null;
     if (move.km)
         kingpos[user] = move.to
 }
+
 function undocheck(move, user) {
     board[move.from] = board[move.to];
     board[move.to] = move.troop;
     if (move.km)
         kingpos[user] = move.from;
 }
+
 function getToArray(from) {
     var len = possmov.length, toArray = [];
     for (var i = 0; i < len; i++) {
@@ -345,19 +393,23 @@ function getToArray(from) {
     }
     return toArray;
 }
+
 function getMove(from, to) {
     var len = possmov.length;
     for (var i = 0; i < possmov.length; i++)
         if (from == possmov[i].from && to == possmov[i].to)
             return possmov[i];
 }
+
 function ecoem(sqare, user) {
     return pos[user]["elephant"].indexOf(sqare) + 1 & capable_castling[user];
 }
+
 function iskm(sqare, user) {
     if (sqare == kingpos[user])
         return capable_castling[user] + 1;
 }
+
 function result() {
     var isZeropos = !possmov.length;
     if (checkbit && isZeropos) {
@@ -368,6 +420,7 @@ function result() {
         return null;
     }
 }
+
 var res = "";
 async function doActual(move) {
     if (document.getElementsByClassName("check").length) {
@@ -376,9 +429,9 @@ async function doActual(move) {
         document.getElementById("results").style.display = "none";
     }
     if (move.troop)
-        new Audio("kill.wav").play();
+        new Audio("sounds/kill.wav").play();
     else
-        new Audio("move.wav").play();
+        new Audio("sounds/move.wav").play();
     if (move.castle) {
         document.getElementById(move.castle.to).innerHTML = document.getElementById(move.castle.from).innerHTML;
         document.getElementById(move.castle.from).innerHTML = null;
@@ -443,7 +496,7 @@ async function doActual(move) {
     res = result();
     if (res == "checkmate") {
         document.getElementById("results").style.display = "block";
-        audio = new Audio('mate.wav');
+        audio = new Audio('sounds/mate.wav');
         audio.play();
 
         var khatra = document.createElement("div");
@@ -453,7 +506,7 @@ async function doActual(move) {
     }
     else if (checkbit) {
         document.getElementById("results").style.display = "block";
-        audio = new Audio('check.wav');
+        audio = new Audio('sounds/check.wav');
         audio.play();
         var khatra = document.createElement("div");
         khatra.classList.add("check");
@@ -461,12 +514,13 @@ async function doActual(move) {
         document.getElementById("results").innerHTML = "CHECK";
     } else if (res == "stillmate") {
         document.getElementById("results").style.display = "block";
-        audio = new Audio('mate.wav');
+        audio = new Audio('sounds/mate.wav');
         audio.play();
         document.getElementById("results").innerHTML = "STILL-MATE";
     }
     //document.documentElement.style.setProperty('--rot', user == "white" ? '0deg' : '180deg');
 }
+
 function undo() {
     if (document.getElementsByClassName("check").length) {
         $('.check').remove();
@@ -507,7 +561,7 @@ function undo() {
     possmov = autocalculate(user, opponent);
     if (checkbit) {
         document.getElementById("results").style.display = "block";
-        audio = new Audio('check.wav');
+        audio = new Audio('sounds/check.wav');
         audio.play();
         var khatra = document.createElement("div");
         khatra.classList.add("check");
