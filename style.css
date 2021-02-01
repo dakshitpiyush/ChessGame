@@ -89,7 +89,7 @@ select#choose option[value="queen"] { background-image:url("icons/queen_black.pn
       display: none;
       text-align: center;
       
-      font-family: 'ABeeZee';
+      font-family: 'Ubuntu';
   }
   [type=radio]{
       height: 0;
@@ -118,16 +118,38 @@ select#choose option[value="queen"] { background-image:url("icons/queen_black.pn
     transform: rotate(0deg);
   }
   .undo{
-   width: 99px;
-    height: 50px;
-    background-color: #0ead0e;
+    width: 118px;
+    height: 60px;
+    background-color: #7f5733;
     color: white;
     border: none;
     padding: 0;
     margin: 10px;
-    font-size: 17px;
-    font-family: calibri;
+    font-size: 20px;  
+    font-family: Ubuntu;
     cursor: pointer;
+    position: absolute;
+    border-radius: 10px;
+    display: list-item;
+    top: 50px;
+    right: 50px;
+  }
+  .replay{
+    width: 118px;
+    height: 60px;
+    background-color: #7f5733;
+    color: white;
+    border: none;
+    padding: 0;
+    margin: 10px;
+    font-size: 20px;
+    font-family: Ubuntu;
+    cursor: pointer;
+    position: absolute;
+    border-radius: 10px;
+    display: list-item;
+    top: 150px;
+    right: 50px;
   }
   #choose_user{
     width: 500px;

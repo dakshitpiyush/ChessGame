@@ -64,11 +64,12 @@ function selectColor(){
         document.getElementsByClassName("selection")[0].style.border="1px solid green";
     }
 }
+var usernameBox;
 function startGame(){
     var whiteRdButton=document.getElementById("white_select");
     var blackRdButton=document.getElementById("black_select");
-    var usernameBox=document.getElementById("fname");
-    if((whiteRdButton.checked || blackRdButton.checked) && (!usernameBox.value=="")){
+    usernameBox=document.getElementById("fname").value;
+    if((whiteRdButton.checked || blackRdButton.checked) && (!usernameBox=="")){
         document.getElementById("myModal").style.display="none";
         if(whiteRdButton.checked){
             human="white";
@@ -502,7 +503,12 @@ async function doActual(move) {
         var khatra = document.createElement("div");
         khatra.classList.add("mate");
         document.getElementById(kingpos[user]).appendChild(khatra);
-        document.getElementById("results").innerHTML = "CHECK-MATE";
+        if(user==human){
+            document.getElementById("results").innerHTML = "CHECK-MATE "+ usernameBox + " you lost game";
+        }else{
+            document.getElementById("results").innerHTML = "CHECK-MATE /n"+ usernameBox + " you Won game you seems like THE LEGEND";
+        }
+       
     }
     else if (checkbit) {
         document.getElementById("results").style.display = "block";
@@ -516,7 +522,12 @@ async function doActual(move) {
         document.getElementById("results").style.display = "block";
         audio = new Audio('sounds/mate.wav');
         audio.play();
-        document.getElementById("results").innerHTML = "STILL-MATE";
+        if(user==human){
+            document.getElementById("results").innerHTML = "STILL-MATE "+ usernameBox + " you didn't lost but you didnt win als0";
+        }else{
+            document.getElementById("results").innerHTML = "STILL-MATE "+ usernameBox + " you didn't won but you didnt lost alse anyone coldn't do that";
+        }
+       
     }
     //document.documentElement.style.setProperty('--rot', user == "white" ? '0deg' : '180deg');
 }
@@ -527,46 +538,51 @@ function undo() {
         document.getElementById("results").innerHTML = "";
         document.getElementById("results").style.display = "none";
     }
-    var move = movhistory.pop();
-    if (!move)
+    if(movhistory.length<2){
         return null;
-    document.getElementById(move.from).innerHTML = document.getElementById(move.to).innerHTML;
-    document.getElementById(move.to).innerHTML = move.troop ? "<img class='" + move.troop.color + "' name='" + move.troop.type + "' src='icons/" + move.troop.type + "_" + move.troop.color + ".png' draggable='true' ondragstart='markPossible(this.parentElement)'>" : null;
-    board[move.from] = board[move.to];
-    board[move.to] = move.troop;
-    swapuser();
-    if (move.castle) {
-        document.getElementById(move.castle.from).innerHTML = document.getElementById(move.castle.to).innerHTML;
-        document.getElementById(move.castle.to).innerHTML = '';
-        board[move.castle.from] = board[move.castle.to];
-        board[move.castle.to] = null;
-        kingpos[user] = move.from;
-        capable_castling[user] = move.castle.cc;
-    } else {
-        if (move.promoteTo) {
-            document.getElementById(move.from).innerHTML = "<img class='" + user + "' name='slder' src='icons/slder_" + user + ".png'>"
-            board[move.from].type = "slder";
-        } else {
-            if (move.km) {
-                capable_castling[user] = move.km - 1;
-                kingpos[user] = move.from;
-            } else {
-                capable_castling[user] += move.em ? move.em : 0
-            }
-        }
-        capable_castling[opponent] += move.ec ? move.ec : 0
     }
+    for(i=0;i<2;i++){
+        var move = movhistory.pop();
+        if (!move)
+            return null;
+        document.getElementById(move.from).innerHTML = document.getElementById(move.to).innerHTML;
+        document.getElementById(move.to).innerHTML = move.troop ? "<img class='" + move.troop.color + "' name='" + move.troop.type + "' src='icons/" + move.troop.type + "_" + move.troop.color + ".png' draggable='true' ondragstart='markPossible(this.parentElement)'>" : null;
+        board[move.from] = board[move.to];
+        board[move.to] = move.troop;
+        swapuser();
+        if (move.castle) {
+            document.getElementById(move.castle.from).innerHTML = document.getElementById(move.castle.to).innerHTML;
+            document.getElementById(move.castle.to).innerHTML = '';
+            board[move.castle.from] = board[move.castle.to];
+            board[move.castle.to] = null;
+            kingpos[user] = move.from;
+            capable_castling[user] = move.castle.cc;
+        } else {
+            if (move.promoteTo) {
+                document.getElementById(move.from).innerHTML = "<img class='" + user + "' name='slder' src='icons/slder_" + user + ".png'>"
+                board[move.from].type = "slder";
+            } else {
+                if (move.km) {
+                    capable_castling[user] = move.km - 1;
+                    kingpos[user] = move.from;
+                } else {
+                    capable_castling[user] += move.em ? move.em : 0
+                }
+            }
+            capable_castling[opponent] += move.ec ? move.ec : 0
+        }
 
-    checkbit = isCheck(kingpos[opponent], user);
-    possmov = autocalculate(user, opponent);
-    if (checkbit) {
-        document.getElementById("results").style.display = "block";
-        audio = new Audio('sounds/check.wav');
-        audio.play();
-        var khatra = document.createElement("div");
-        khatra.classList.add("check");
-        document.getElementById(kingpos[user]).appendChild(khatra);
-        document.getElementById("results").innerHTML = "CHECK";
+        checkbit = isCheck(kingpos[opponent], user);
+        possmov = autocalculate(user, opponent);
+        if (checkbit) {
+            document.getElementById("results").style.display = "block";
+            audio = new Audio('sounds/check.wav');
+            audio.play();
+            var khatra = document.createElement("div");
+            khatra.classList.add("check");
+            document.getElementById(kingpos[user]).appendChild(khatra);
+            document.getElementById("results").innerHTML = "CHECK";
+        }
     }
     //document.documentElement.style.setProperty('--rot', user == "white" ? '360deg' : '180deg');
     return move;
@@ -598,4 +614,7 @@ async function markPossible(source) {
             document.getElementById(toArray[i]).appendChild(high);
         }
     }
+}
+function reset(){
+    location.reload();
 }
